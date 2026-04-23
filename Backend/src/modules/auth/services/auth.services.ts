@@ -1,8 +1,8 @@
 import argon2 from "argon2";
 import { IAuthRepository } from "../repositories/interfaces/signup.repositery.interface.js";
-import { AppError } from "../../../common/errors/AppError";
-import { SignupDTO } from "../dtos/signup.dtos.js"; 
-import { toUserResponse } from "../mappers/signup.mappers.js";
+import { AppError } from "../../../common/errors/AppError.js";
+import { SignupDTO } from "../dtos/auth.dtos.js"; 
+import { toUserResponse } from "../mappers/auth.mappers.js";
 
 export class AuthService {
   constructor(private authRepo: IAuthRepository) {}

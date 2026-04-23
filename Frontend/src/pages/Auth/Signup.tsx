@@ -25,9 +25,8 @@ const Signup: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen font-sans bg-[#F8F9FA]">
       
-      {/* LEFT SIDE: THE FORM */}
+
       <div className="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-24 py-12">
-        {/* LOGO FROM IMAGE 2 */}
         <div className="mb-12">
           <img 
             src="/path-to-your-orbyt-logo.png" 

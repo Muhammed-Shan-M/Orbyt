@@ -1,6 +1,6 @@
-import {User} from '../models/user.model'
-import { IUser } from '../types/user.types'
-import { IAuthRepository } from './interfaces/signup.repositery.interface'
+import {User} from '../../models/user.model'
+import { IUser } from '../../types/user.types'
+import { IAuthRepository } from '../interfaces/signup.repositery.interface'
 
 
 export class AuthRepository implements IAuthRepository {
