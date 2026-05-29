@@ -11,4 +11,16 @@ export class AuthRepository implements IAuthRepository {
     async createUser(data: Partial<IUser>) {
         return await User.create(data)
     }
+
+    async findById(id: string) {
+        return await User.findById(id)
+    }
+
+    async updatePassword(userId: string, hashedPassword: string) {
+        await User.findByIdAndUpdate(
+            userId,
+            { password: hashedPassword },
+            { new: true }
+        )
+    }
 }

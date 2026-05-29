@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { string } from "zod";
 
 export type UserRole = "founder" | "investor" | "admin";
 
@@ -15,7 +16,7 @@ export interface IUser {
   location?: string;
 
   isEmailVerified: boolean;
-  isApproved: boolean; 
+  isApproved: boolean;
 
   status: UserStatus;
 
@@ -29,4 +30,14 @@ export interface IUser {
 
 export interface IUserDocument extends IUser {
   _id: Types.ObjectId;
+}
+
+
+// export type UserPayLoad = Partial<IUser> & {token?: string}
+export interface UserPayLoad {
+  email: string,
+  password: string,
+  fullName: string,
+  role: UserRole,
+  token: string
 }

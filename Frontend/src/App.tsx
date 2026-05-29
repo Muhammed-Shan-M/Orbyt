@@ -1,11 +1,30 @@
-import React from 'react'
 
-import Signup from './pages/Auth/Signup'
+import AppRoutes from './app/routes'
+import { Toaster } from "sonner";
+import { store } from "./app/store/store";
+import { Provider } from "react-redux";
+import { ReactQueryProvider } from './app/providers/react-query.provider'
 
-export default function App() {
+export const App = () => {
+ 
+
   return (
-    <div>
-      <Signup/>
-    </div>
+    <>
+      <ReactQueryProvider>
+        <Provider store={store}>
+
+          <Toaster
+            position="top-right"
+            richColors
+            theme="dark"
+          />
+
+
+          <AppRoutes />
+
+        </Provider>
+      </ReactQueryProvider>
+
+    </>
   )
 }
