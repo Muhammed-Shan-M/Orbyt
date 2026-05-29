@@ -9,9 +9,8 @@ import { HTTP_STATUS } from "../../../../common/constands/httpStatus";
 import { genarateToken } from "../../utils/token.utils";
 import { SUCCESS_MESSAGES } from "../../../../common/constands/success-message";
 import { ENV } from "../../../../config/env";
-import { User } from "../../models/user.model";
 import { genarateAccessToken, genarateRefreshToken } from "../../../../common/utils/genarateTokens";
-import { IUser, IUserDocument, UserPayLoad } from "../../types/user.types";
+import {  IUserDocument, UserPayLoad } from "../../types/user.types";
 import { deleteAllUserRefreshTokens, deleteRefreshToken, getRefreshToken, storeRefreshToken } from "../../utils/redis.utils";
 import { verificationEmailTemplate } from "../../../../common/services/email/templates/verification-email.template.ts";
 import { IEmailService } from "../../../../common/services/email/interfaces/email-service.interface";
@@ -118,7 +117,11 @@ export class AuthService implements IAuthService {
       isEmailVerified: true
     })
 
-    const accessToken = genarateAccessToken(user._id.toString())
+    if(!user){
+      throw new AppError(ERROR_MESSAGES.AUTH.USER_CREATION_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    }
+
+    const accessToken = genarateAccessToken(user._id.toString(), user.role)
     const refreshToken = genarateRefreshToken()
 
     await this.redisService.del(`verify:${userEmail}`)
@@ -190,7 +193,7 @@ export class AuthService implements IAuthService {
     }
 
 
-    const accessToken = genarateAccessToken(user._id.toString())
+    const accessToken = genarateAccessToken(user._id.toString(), user.role)
     const refreshToken = genarateRefreshToken()
 
 
@@ -230,7 +233,7 @@ export class AuthService implements IAuthService {
     await deleteRefreshToken(token);
 
 
-    const accessToken = genarateAccessToken(userId);
+    const accessToken = genarateAccessToken(userId, user.role);
     const newRefreshToken = genarateRefreshToken()
 
     await storeRefreshToken(newRefreshToken, userId)

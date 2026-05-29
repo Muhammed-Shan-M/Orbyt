@@ -6,13 +6,10 @@ import { ENV } from "../../config/env";
 import { HTTP_STATUS } from "../constands/httpStatus";
 import { AuthRepository } from "../../modules/auth/repositories/impliments/signup.repositery";
 import { ERROR_MESSAGES } from "../constands/error-message.constands";
+import { JwtPayload } from "../types/jwtPayload";
+import { IAuthRepository } from "../../modules/auth/repositories/interfaces/signup.repositery.interface";
 
-const authRepository = new AuthRepository()
-
-
-interface JwtPayload {
-    userId: string;
-}
+const authRepository:IAuthRepository = new AuthRepository()
 
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
@@ -28,14 +25,6 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
     let decoded: JwtPayload
 
-
-
-    // try {
-    //     decoded = jwt.verify(token, ENV.ACCESS_TOKEN_SECRET) as JwtPayload
-
-    // } catch (error) {
-    //     return next(new AppError(ERROR_MESSAGES.AUTH.INVALID_TOKEN, HTTP_STATUS.UNAUTHORIZED))
-    // }
     try {
 
         decoded = jwt.verify(token, ENV.ACCESS_TOKEN_SECRET) as JwtPayload
@@ -75,8 +64,6 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
     }
 
-
-
     const user = await authRepository.findById(decoded.userId);
 
     console.log(decoded)
@@ -85,7 +72,10 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
         return next(new AppError(ERROR_MESSAGES.AUTH.USER_NOT_FOUND, HTTP_STATUS.UNAUTHORIZED))
     }
 
-    req.user = user
+    req.user = {
+        userId : decoded.userId,
+        role: decoded.role
+    }
 
     console.log(req.user)
 

@@ -37,12 +37,7 @@ router.post(ROUTES.AUTH.RESET_PASSWORD, asyncHandler(authControler.resetPassword
 router.post(ROUTES.AUTH.RESEND_FORGOT_PASSWORD_OTP, asyncHandler(authControler.resendForgotPasswordOtp))
 router.get(ROUTES.AUTH.FORGOTPASSWORD_COOLDOWN, asyncHandler(authControler.getForgotPasswordCooldown))
 
-router.get(
-    '/profile-completion',
-    protect, () => {
-        console.log("Profile completion endpoint hit")
-    }
-);
+
 
 
 export default router;

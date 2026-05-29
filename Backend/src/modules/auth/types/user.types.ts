@@ -1,3 +1,4 @@
+import { HydratedDocument } from "mongoose";
 import { Types } from "mongoose";
 import { string } from "zod";
 
@@ -23,14 +24,10 @@ export interface IUser {
   lastLoginAt?: Date;
   profileCompleted: boolean;
 
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 
-export interface IUserDocument extends IUser {
-  _id: Types.ObjectId;
-}
+export type IUserDocument = HydratedDocument<IUser>;
 
 
 // export type UserPayLoad = Partial<IUser> & {token?: string}

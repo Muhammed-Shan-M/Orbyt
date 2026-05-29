@@ -17,6 +17,9 @@ export const ERROR_MESSAGES = {
     TOO_MANY_ATTEMPTS: "Too many failed attempts. Please request a new OTP.",
     OTP_EXPIRED: "OTP expired",
     OTP_NOT_VERIFIED:'OTP verification required',
+    USER_CREATION_FAILED: "Unable to create user account.",
+    UNAUTHORIZED: "Unauthorized access",
+    FORBIDDEN: "Access denied",
   },
 
   VALIDATION: {
