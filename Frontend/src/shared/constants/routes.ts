@@ -1,11 +1,11 @@
 
 
 export const ROUTES = {
-  public: {
+  PUBLIC: {
     LANDING: "/",
   },
 
-  auth: {
+  AUTH: {
     LOGIN: "/login",
     SIGNUP: "/signup",
     VERIFY_EMAIL: "/verify-email/:token",
@@ -26,6 +26,8 @@ export const ROUTES = {
   },
 
   ADMIN: {
+    LOGIN: '/admin/login',
     DASHBOARD: '/admin/dashboard',
+    USERS: '/admin/users',
   },
 } as const;

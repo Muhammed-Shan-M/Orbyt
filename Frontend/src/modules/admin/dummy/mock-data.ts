@@ -1,0 +1,86 @@
+import type { IUserDocument } from '@/shared/types/user'
+import type { DashboardStats } from '../types/admin'
+
+export const mockUsers: IUserDocument[] = [
+  {
+    _id: '1',
+    fullName: 'James Donovan',
+    email: 'james@techflow.co',
+    role: 'founder',
+    status: 'active',
+    verification: 'Tier 2 Verified',
+    activity: '2 hrs ago',
+    joinedDate: 'Oct 12, 2023',
+    company: 'TechFlow Inc',
+    isBlocked: false,
+  },
+  {
+    _id: '2',
+    fullName: 'Sarah Chen',
+    email: 'sarah@horizon-cap.com',
+    role: 'investor',
+    status: 'active',
+    verification: 'Tier 3 Verified',
+    activity: 'Online',
+    joinedDate: 'Sep 04, 2023',
+    company: 'Horizon Capital',
+    isBlocked: false,
+  },
+  {
+    _id: '3',
+    fullName: 'Marcus Kinsley',
+    email: 'm.kinsley@gmail.com',
+    role: 'founder',
+    status: 'active',
+    verification: 'Unverified',
+    activity: 'Never',
+    joinedDate: 'Today',
+    company: 'StartupXYZ',
+    isBlocked: false,
+  },
+  {
+    _id: '4',
+    fullName: 'Elena Rostova',
+    email: 'elena@ventures.co.uk',
+    role: 'investor',
+    status: 'blocked',
+    verification: 'Tier 1 Verified',
+    activity: '4 mos ago',
+    joinedDate: 'Jan 15, 2023',
+    company: 'Ventures Ltd',
+    isBlocked: true,
+  },
+  {
+    _id: '5',
+    fullName: 'Aisha Tyler',
+    email: 'aisha.t@healthsync.io',
+    role: 'founder',
+    status: 'active',
+    verification: 'Tier 2 Verified',
+    activity: '1 day ago',
+    joinedDate: 'Nov 02, 2023',
+    company: 'HealthSync',
+    isBlocked: false,
+  },
+  {
+    _id: '6',
+    fullName: 'David Kim',
+    email: 'david.kim@innovatelab.com',
+    role: 'investor',
+    status: 'active',
+
+
+    joinedDate: 'Aug 20, 2023',
+    company: 'Innovate Lab',
+    isBlocked: false,
+  },
+]
+
+export const dashboardStats: DashboardStats = {
+  totalUsers: 14208,
+  totalFounders: 8200,
+  totalInvestors: 6008,
+  activeUsers: 12500,
+  pendingUsers: 1200,
+  suspendedUsers: 508,
+}

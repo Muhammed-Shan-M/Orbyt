@@ -18,7 +18,7 @@ export const useLogout = () => {
 
             dispatch(logout())
 
-            navigate(ROUTES.public.LANDING)
+            navigate(ROUTES.PUBLIC.LANDING)
         } catch (error) {
             console.log(error)
         }

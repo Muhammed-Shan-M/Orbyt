@@ -6,6 +6,7 @@ export interface IAuthController {
     resendVerificationEmail(req:Request, res: Response): Promise<any>
 
     login(req: Request, res: Response): Promise<any>
+    adminLogin(req: Request, res: Response): Promise<any>
 
     refreshToken(req: Request, res:Response): Promise<any>
 

@@ -13,6 +13,7 @@ export const ERROR_MESSAGES = {
     TOKEN_EXPIRED: "Token expired",
     TOKEN_MISSING: "Access token missing",
     PLEASE_WAIT: "Please wait before requesting another OTP",
+    ADMIN_ACCESS_REQUIRED: "Admin access required",
     INVALID_OTP: "Invalid or expired OTP.",
     TOO_MANY_ATTEMPTS: "Too many failed attempts. Please request a new OTP.",
     OTP_EXPIRED: "OTP expired",
@@ -30,6 +31,14 @@ export const ERROR_MESSAGES = {
     UPPERCASE_ERROR: "Must contain uppercase",
     LOWERCASE_ERROR: "Must contain lowercase",
     MUST_CONTAIN_NUMBER: "Must contain number",
+  },
+
+
+  ADMIN: {
+    USER_NOT_FOUND: "User not found",
+    USER_ALREADY_BLOCKED: "User is already blocked",
+    USER_ALREADY_UNBLOCKED: "User is already unblocked",
+    USER_ID_INVALID: "Invalid user ID",
   },
 
 

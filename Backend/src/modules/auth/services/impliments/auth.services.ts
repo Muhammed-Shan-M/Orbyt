@@ -10,7 +10,7 @@ import { genarateToken } from "../../utils/token.utils";
 import { SUCCESS_MESSAGES } from "../../../../common/constands/success-message";
 import { ENV } from "../../../../config/env";
 import { genarateAccessToken, genarateRefreshToken } from "../../../../common/utils/genarateTokens";
-import {  IUserDocument, UserPayLoad } from "../../types/user.types";
+import { IUserDocument, UserPayLoad } from "../../types/user.types";
 import { deleteAllUserRefreshTokens, deleteRefreshToken, getRefreshToken, storeRefreshToken } from "../../utils/redis.utils";
 import { verificationEmailTemplate } from "../../../../common/services/email/templates/verification-email.template.ts";
 import { IEmailService } from "../../../../common/services/email/interfaces/email-service.interface";
@@ -30,6 +30,73 @@ export class AuthService implements IAuthService {
     private emailService: IEmailService
   ) { }
 
+
+
+
+
+  private async createForgotPasswordOtp(user: IUserDocument): Promise<void> {
+
+    const otp = generateOtp();
+
+    const hashedOtp = hashValue(otp);
+
+    const otpKey = authRedisKeys.forgotPasswordOtp(user._id.toString());
+
+    const cooldownKey = authRedisKeys.forgotPasswordCooldown(user._id.toString());
+
+    await this.redisService.set<OtpData>(
+      otpKey,
+      {
+        hashedOtp,
+        attempts: 0,
+        verified: false,
+      },
+      OTP_EXPIRY_SECONDS
+    );
+
+    await this.redisService.set<boolean>(
+      cooldownKey,
+      true,
+      OTP_COOLDOWN_SECONDS
+    );
+
+    const html = forgotPasswordOtpTemplate(otp);
+
+    await this.emailService.sendEmail({
+      to: user.email,
+      subject: "Password Reset OTP",
+      html,
+    });
+  }
+
+
+  private async authenticateUser(email: string, password: string) {
+    const user = await this.authRepo.findByEmail(email);
+
+    if (!user) {
+      throw new AppError(ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS, HTTP_STATUS.UNAUTHORIZED);
+    }
+
+    if (!user.isEmailVerified) {
+      throw new AppError(ERROR_MESSAGES.AUTH.ACCOUNT_NOT_VERIFIED, HTTP_STATUS.FORBIDDEN);
+    }
+
+    if (user.isBlocked) {
+      throw new AppError(ERROR_MESSAGES.AUTH.ACCOUNT_BLOCKED, HTTP_STATUS.FORBIDDEN);
+    }
+
+    const isMatch = await argon2.verify(user.password, password);
+
+    if (!isMatch) {
+      throw new AppError(ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS, HTTP_STATUS.UNAUTHORIZED);
+    }
+
+
+    return user;
+  }
+
+
+
   async signup(data: SignupDTO) {
 
     const existingUser = await this.authRepo.findByEmail(data.email);
@@ -45,6 +112,7 @@ export class AuthService implements IAuthService {
     }
 
     const hashedPassword = await argon2.hash(data.password);
+    console.log(hashedPassword, "hashed password")
 
     const token = genarateToken()
 
@@ -117,7 +185,7 @@ export class AuthService implements IAuthService {
       isEmailVerified: true
     })
 
-    if(!user){
+    if (!user) {
       throw new AppError(ERROR_MESSAGES.AUTH.USER_CREATION_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR)
     }
 
@@ -176,22 +244,8 @@ export class AuthService implements IAuthService {
 
 
   async login(email: string, password: string): Promise<any> {
-    const user = await this.authRepo.findByEmail(email)
 
-    if (!user) {
-      throw new AppError(ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS, HTTP_STATUS.UNAUTHORIZED)
-    }
-
-    if (!user.isEmailVerified) {
-      throw new AppError(ERROR_MESSAGES.AUTH.ACCOUNT_NOT_VERIFIED, HTTP_STATUS.FORBIDDEN)
-    }
-
-    const isMatch = await argon2.verify(user.password, password);
-
-    if (!isMatch) {
-      throw new AppError(ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS, HTTP_STATUS.UNAUTHORIZED)
-    }
-
+    const user = await this.authenticateUser(email, password)
 
     const accessToken = genarateAccessToken(user._id.toString(), user.role)
     const refreshToken = genarateRefreshToken()
@@ -208,6 +262,28 @@ export class AuthService implements IAuthService {
       refreshToken
     }
 
+  }
+
+
+  async adminLogin(email: string, password: string) {
+
+    const user = await this.authenticateUser(email, password);
+
+    if (user.role !== "admin") {
+      throw new AppError(ERROR_MESSAGES.AUTH.ADMIN_ACCESS_REQUIRED, HTTP_STATUS.FORBIDDEN);
+    }
+
+    const accessToken = genarateAccessToken(user._id.toString(), user.role);
+
+    const refreshToken = genarateRefreshToken();
+
+    await storeRefreshToken(refreshToken, user._id.toString());
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
   }
 
 
@@ -228,6 +304,10 @@ export class AuthService implements IAuthService {
 
     if (!user) {
       throw new AppError(ERROR_MESSAGES.AUTH.USER_NOT_FOUND, HTTP_STATUS.UNAUTHORIZED)
+    }
+
+    if (user.isBlocked) {
+      throw new AppError(ERROR_MESSAGES.AUTH.ACCOUNT_BLOCKED, HTTP_STATUS.FORBIDDEN);
     }
 
     await deleteRefreshToken(token);
@@ -380,45 +460,8 @@ export class AuthService implements IAuthService {
   }
 
 
-
-  private async createForgotPasswordOtp(user: IUserDocument): Promise<void> {
-
-    const otp = generateOtp();
-
-    const hashedOtp = hashValue(otp);
-
-    const otpKey = authRedisKeys.forgotPasswordOtp(user._id.toString());
-
-    const cooldownKey = authRedisKeys.forgotPasswordCooldown(user._id.toString());
-
-    await this.redisService.set<OtpData>(
-      otpKey,
-      {
-        hashedOtp,
-        attempts: 0,
-        verified: false,
-      },
-      OTP_EXPIRY_SECONDS
-    );
-
-    await this.redisService.set<boolean>(
-      cooldownKey,
-      true,
-      OTP_COOLDOWN_SECONDS
-    );
-
-    const html = forgotPasswordOtpTemplate(otp);
-
-    await this.emailService.sendEmail({
-      to: user.email,
-      subject: "Password Reset OTP",
-      html,
-    });
-  }
-
-
   async getForgotPasswordCooldown(email: string): Promise<{ remainingSeconds: number }> {
-    
+
     const user = await this.authRepo.findByEmail(email);
 
     if (!user) {

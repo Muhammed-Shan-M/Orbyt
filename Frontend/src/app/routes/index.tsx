@@ -1,22 +1,13 @@
 
+import { BrowserRouter, Routes, Route, Navigate, } from 'react-router-dom';
 
-import React from 'react'
+import { publicRoutes } from './public.routes';
+import { protectedRoutes } from './protected.routes';
 
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom'
+import { useAuthInitializer } from '../hooks/useAuthInitializer';
 
-import { publicRoutes } from './public.routes'
-
-
-import { protectedRoutes } from './protucted.routes'
-import { useAuthInitializer } from '../hooks/useAuthInitializer'
-
-const AppRoutes: React.FC = () => {
-   useAuthInitializer()
+const AppRoutes = () => {
+  useAuthInitializer();
 
   return (
     <BrowserRouter>
@@ -34,10 +25,9 @@ const AppRoutes: React.FC = () => {
             />
           }
         />
-
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default AppRoutes
+export default AppRoutes;

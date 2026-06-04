@@ -46,6 +46,11 @@ const userSchema = new Schema<IUser>(
       default: false,
     },
 
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+
     status: {
       type: String,
       enum: ["active", "blocked"],

@@ -3,6 +3,7 @@ export const ROUTES = {
     BASE: "/api/auth",
     SIGNUP: "/signup",
     LOGIN: "/login",
+    ADMIN_LOGIN: "/admin/login",
     LOGOUT: "/logout",
     FORGOT_PASSWORD: "/forgot-password",
     RESET_PASSWORD: "/reset-password",
@@ -16,6 +17,15 @@ export const ROUTES = {
     FORGOTPASSWORD_COOLDOWN: "/forgot-password-cooldown",
 
     ME: "/me",
+  },
+
+  ADMIN: {
+    BASE: "/api/admin",
+    DASHBOARD: "/dashboard",
+    USERS: "/users",
+    USER: "/user/:userId",
+    BLOCK_USER: "/user/:userId/block",
+    UNBLOCK_USER: "/user/:userId/unblock"
   },
 
   USER: {

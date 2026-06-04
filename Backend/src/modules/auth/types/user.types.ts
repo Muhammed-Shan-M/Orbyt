@@ -12,7 +12,7 @@ export interface IUser {
   password: string;
   role: UserRole;
 
-  fullName?: string;
+  fullName: string;
   profileImageUrl?: string;
   location?: string;
 
@@ -20,10 +20,13 @@ export interface IUser {
   isApproved: boolean;
 
   status: UserStatus;
+  isBlocked: boolean;
 
   lastLoginAt?: Date;
   profileCompleted: boolean;
 
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 

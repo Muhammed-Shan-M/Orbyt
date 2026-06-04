@@ -9,7 +9,7 @@ import { ERROR_MESSAGES } from "../constands/error-message.constands";
 import { JwtPayload } from "../types/jwtPayload";
 import { IAuthRepository } from "../../modules/auth/repositories/interfaces/signup.repositery.interface";
 
-const authRepository:IAuthRepository = new AuthRepository()
+const authRepository: IAuthRepository = new AuthRepository()
 
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
@@ -72,8 +72,12 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
         return next(new AppError(ERROR_MESSAGES.AUTH.USER_NOT_FOUND, HTTP_STATUS.UNAUTHORIZED))
     }
 
+    if (user.isBlocked) {
+        throw new AppError(ERROR_MESSAGES.AUTH.ACCOUNT_BLOCKED, HTTP_STATUS.FORBIDDEN);
+    }
+
     req.user = {
-        userId : decoded.userId,
+        userId: decoded.userId,
         role: decoded.role
     }
 

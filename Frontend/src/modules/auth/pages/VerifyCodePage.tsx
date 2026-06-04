@@ -129,7 +129,7 @@ const VerifyCodePage: React.FC = () => {
 
       await mutateAsync({ email, otp })
 
-      navigate(`${ROUTES.auth.FORGOT_PASSWORD_RESET}?email=${encodeURIComponent(email)}`)
+      navigate(`${ROUTES.AUTH.FORGOT_PASSWORD_RESET}?email=${encodeURIComponent(email)}`)
 
     } catch (error: any) {
 

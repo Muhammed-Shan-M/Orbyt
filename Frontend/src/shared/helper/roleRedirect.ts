@@ -12,6 +12,6 @@ export const getDashboardRouteByRole = (role: string) => {
       return ROUTES.ADMIN.DASHBOARD
 
     default:
-      return ROUTES.auth.LOGIN
+      return ROUTES.AUTH.LOGIN
   }
 }

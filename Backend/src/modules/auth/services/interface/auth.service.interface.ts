@@ -8,6 +8,7 @@ export interface IAuthService {
     resendVerificationEmail(email: string): Promise<any>
 
     login(email: string, password: string): Promise<any>
+    adminLogin(email: string, password: string): Promise<any>
 
     refreshToken(token: string): Promise<any>
 
@@ -21,6 +22,5 @@ export interface IAuthService {
 
     resendOtpForForgotPassword(email: string): Promise<any>
 
-    getForgotPasswordCooldown(email: string): Promise<{remainingSeconds: number}>
-
+    getForgotPasswordCooldown(email: string): Promise<{ remainingSeconds: number }>
 }   

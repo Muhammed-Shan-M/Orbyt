@@ -53,7 +53,7 @@ const ResetPasswordPage: React.FC = () => {
       })
 
       navigate(
-        ROUTES.auth.FORGOT_PASSWORD_SUCCESS
+        ROUTES.AUTH.FORGOT_PASSWORD_SUCCESS
       )
 
     } catch (error: any) {

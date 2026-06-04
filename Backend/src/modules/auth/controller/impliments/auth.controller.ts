@@ -10,6 +10,7 @@ import { success } from "zod/mini";
 import { COOKIE_MAX_AGE } from "../../../../common/constands/config.constands";
 import { verifyForgotPasswordOtpSchema } from "../../validaters/verify-forgot-password.validator";
 import { resetPasswordSchema } from "../../validaters/reset-password.validator";
+import { loginSchema } from "../../validaters/loginSchema.validaters";
 
 
 
@@ -70,7 +71,9 @@ export class AuthController implements IAuthController {
   login = async (req: Request, res: Response) => {
     const { email, password } = req.body
 
-    const result = await this.authService.login(email, password)
+    const validatedData = loginSchema.parse({ email, password })
+
+    const result = await this.authService.login(validatedData.email, validatedData.password)
 
     res.cookie(
       "refreshToken",
@@ -91,6 +94,31 @@ export class AuthController implements IAuthController {
     })
   }
 
+  adminLogin = async (req: Request, res: Response) => {
+    const { email, password } = req.body
+
+    const validatedData = loginSchema.parse({ email, password })
+    
+    const result = await this.authService.adminLogin(validatedData.email, validatedData.password)
+
+    res.cookie(
+      "refreshToken",
+      result.refreshToken,
+      {
+        httpOnly: true,
+        secure: ENV.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      }
+    )
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: SUCCESS_MESSAGES.AUTH.LOGIN_SUCCESS,
+      user: result.user,
+      accessToken: result.accessToken
+    })
+  }
 
   refreshToken = async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;

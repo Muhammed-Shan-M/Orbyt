@@ -41,7 +41,7 @@ const ForgotPasswordPage: React.FC = () => {
       await mutateAsync({ email })
 
       navigate(
-        `${ROUTES.auth.FORGOT_PASSWORD_VERIFY}?email=${encodeURIComponent(email)}`
+        `${ROUTES.AUTH.FORGOT_PASSWORD_VERIFY}?email=${encodeURIComponent(email)}`
       )
 
     } catch (error: any) {

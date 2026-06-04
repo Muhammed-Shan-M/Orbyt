@@ -15,6 +15,7 @@ export interface IUser {
 
   isEmailVerified: boolean;
   isApproved: boolean;
+  isBlocked: boolean;
 
   status: UserStatus;
 
@@ -25,4 +26,6 @@ export interface IUser {
   updatedAt: Date;
 }
 
-
+export interface IUserDocument extends IUser {
+  _id: string;
+}
