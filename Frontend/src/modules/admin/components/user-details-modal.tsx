@@ -1,13 +1,13 @@
 'use client'
 
-import type { IUserDocument } from '@/shared/types/user'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/components/ui/dialog'
 import { Button } from '@/shared/components/ui/button';
 import { Badge } from '@/shared/components/ui/badge'
 import { Mail, Building2, Shield, Calendar, AlertCircle } from 'lucide-react'
+import { useUser } from '../hooks/useUser';
 
 interface UserDetailsModalProps {
-    user: IUserDocument | null
+    userId: string | null
     isOpen: boolean
     onClose: () => void
     onBlock?: (userId: string) => void
@@ -38,9 +38,26 @@ const getVerificationColor = (verification: string) => {
     }
 }
 
-export function UserDetailsModal({ user, isOpen, onClose, onBlock, onUnblock, }: UserDetailsModalProps) {
+export function UserDetailsModal({ userId, isOpen, onClose, onBlock, onUnblock, }: UserDetailsModalProps) {
+
+    const { data: user, isLoading, } = useUser(userId);
+
+    if (!userId) return null;
 
     if (!user) return null
+
+    if (isLoading) {
+        return (
+            <Dialog
+                open={isOpen}
+                onOpenChange={onClose}
+            >
+                <DialogContent>
+                    Loading user details...
+                </DialogContent>
+            </Dialog>
+        );
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

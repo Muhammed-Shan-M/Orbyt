@@ -3,19 +3,18 @@ import { User } from "../../auth/models/user.model";
 import { GetUsersDto } from "../dto/get-user.dto";
 import { IAdminRepository } from "./admin.repository.interface";
 import { QueryFilter } from 'mongoose';
-import { IUser } from "../../auth/types/user.types";
+import { IUser, IUserDocument } from "../../auth/types/user.types";
+import { BaseRepository } from "../../../common/repositories/base.repository";
 
-export class AdminRepository implements IAdminRepository {
+export class AdminRepository extends BaseRepository<IUserDocument> implements IAdminRepository {
+
+    constructor() {
+        super(User);
+    }
 
     async findUsers(query: GetUsersDto) {
 
-        const {
-            page,
-            limit,
-            search,
-            role,
-            status,
-        } = query;
+        const { page, limit, search, role, status, } = query;
 
         const skip = (page - 1) * limit;
 
@@ -47,28 +46,21 @@ export class AdminRepository implements IAdminRepository {
         }
 
         if (status) {
-            filter.isBlocked =
-                status === "blocked";
+            filter.isBlocked = status === "blocked";
         }
 
-        const [users, totalUsers] =
-            await Promise.all([
-                User.find(filter)
-                    .sort({ createdAt: -1 })
-                    .skip(skip)
-                    .limit(limit),
+        const [users, totalUsers] = await Promise.all([
+            User.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit),
 
-                User.countDocuments(filter),
-            ]);
+            User.countDocuments(filter),
+        ]);
 
-        return {
-            users,
-            totalUsers,
-        };
+        return { users, totalUsers, };
     }
-    async findUserById(userId: string) {
-        return User.findById(userId);
-    }
+
 
     async blockUser(userId: string) {
         await User.findByIdAndUpdate(userId, { isBlocked: true });

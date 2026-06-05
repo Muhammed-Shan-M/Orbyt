@@ -15,7 +15,7 @@ export class AdminService
 
 
     private async validateUserAction(userId: string) {
-        const user = await this.adminRepository.findUserById(userId);
+        const user = await this.adminRepository.findById(userId);
 
         if (!user) {
             throw new AppError(
@@ -48,7 +48,7 @@ export class AdminService
     }
 
     async getUser(userId: string) {
-        const user = await this.adminRepository.findUserById(userId);
+        const user = await this.adminRepository.findById(userId);
 
         if (!user) {
             throw new AppError(ERROR_MESSAGES.ADMIN.USER_NOT_FOUND, 404);

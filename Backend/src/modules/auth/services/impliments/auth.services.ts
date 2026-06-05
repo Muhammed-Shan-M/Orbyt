@@ -180,7 +180,7 @@ export class AuthService implements IAuthService {
       throw new AppError(ERROR_MESSAGES.AUTH.USER_ALREADY_EXISTS, HTTP_STATUS.CONFLICT)
     }
 
-    const user = await this.authRepo.createUser({
+    const user = await this.authRepo.create({
       ...userData,
       isEmailVerified: true
     })

@@ -19,7 +19,7 @@ import { useDebounce } from '@/shared/hooks/useDebounce'
 import { DataTable } from '@/shared/components/data-table/DataTable'
 
 export default function UserManagementPage() {
-  const [selectedUser, setSelectedUser] = useState<IUserDocument | null>(null)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterRole, setFilterRole] = useState<string | null>(null)
@@ -51,12 +51,11 @@ export default function UserManagementPage() {
   const totalPages = data?.totalPages ?? 1;
 
   const handleViewUser = (user: IUserDocument) => {
-    console.log(user)
-    setSelectedUser(user)
+    setSelectedUserId(user._id)
     setIsModalOpen(true)
   }
 
-  // console.log('Filtered Users:', users)
+
 
   const handleBlockUser = (userId: string) => {
     blockUserMutation(userId);
@@ -209,7 +208,7 @@ export default function UserManagementPage() {
       <AdminSidebar />
       <AdminNavbar />
 
-      <main className="ml-56 mt-16 p-6">
+      <main className="mt-16 p-6 md:ml-56">
         <div className="mb-6 text-sm text-muted-foreground">
           <span>Admin</span>
           <span className="mx-2">/</span>
@@ -330,11 +329,11 @@ export default function UserManagementPage() {
       </main>
 
       <UserDetailsModal
-        user={selectedUser}
+        userId={selectedUserId}
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false)
-          setSelectedUser(null)
+          setSelectedUserId(null)
         }}
         onBlock={handleBlockUser}
         onUnblock={handleUnblockUser}

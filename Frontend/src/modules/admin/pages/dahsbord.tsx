@@ -43,7 +43,7 @@ export default function AdminDashboardPage() {
       <AdminNavbar />
 
       {/* Main Content */}
-      <main className="ml-56 mt-16 p-6">
+      <main className="mt-16 p-6 md:ml-56">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
