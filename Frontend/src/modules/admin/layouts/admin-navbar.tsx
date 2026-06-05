@@ -1,13 +1,16 @@
 'use client'
 
-import { Search, Bell } from 'lucide-react'
+import { Search, Bell, LogOut} from 'lucide-react'
 import { Input } from '@/shared/components/ui/input'
 import { useSelector } from 'react-redux'
 import type { RootState } from '@/app/store/store'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from '@/shared/components/ui/dropdown-menu'
+import { useLogout } from '@/modules/auth/hooks/useLogout'
 
 
 export function AdminNavbar() {
-  const {user} = useSelector((state:RootState ) => state.auth)
+  const { user } = useSelector((state: RootState) => state.auth)
+  const logout = useLogout()
 
   return (
     <header className="fixed top-0 left-56 right-0 h-16 border-b border-border/50 bg-background/80 backdrop-blur-sm flex items-center justify-between px-6 z-40">
@@ -34,12 +37,31 @@ export function AdminNavbar() {
         </button>
 
         {/* Profile Avatar */}
-        <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold hover:opacity-80 transition-opacity">
-          {user?.fullName
-            ?.split(' ')
-            .map((n) => n[0])
-            .join('')}
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold hover:opacity-80 transition-opacity">
+              {user?.fullName
+                ?.split(' ')
+                .map((n) => n[0])
+                .join('')}
+            </button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            align="end"
+            className="w-48 bg-background border-border"
+          >
+            <DropdownMenuItem
+              className="cursor-pointer text-destructive focus:text-destructive"
+              onClick={() => {
+                logout()
+              }}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   )

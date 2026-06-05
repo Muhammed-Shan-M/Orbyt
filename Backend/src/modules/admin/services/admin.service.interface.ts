@@ -1,7 +1,8 @@
+import { GetUsersDto } from "../dto/get-user.dto";
 import { IPaginatedUsers, IUserListResponse, } from "../types/admin.types";
 
 export interface IAdminService {
-    getUsers(page: number, limit: number): Promise<IPaginatedUsers>;
+    getUsers(query: GetUsersDto): Promise<IPaginatedUsers>;
 
     getUser(userId: string): Promise<IUserListResponse>;
 

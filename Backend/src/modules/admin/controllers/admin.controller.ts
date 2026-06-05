@@ -19,12 +19,16 @@ export class AdminController {
 
     getUsers = async (req: Request, res: Response) => {
 
-        const { page, limit } = getUsersDto.parse(req.query);
+        // const { page, limit } = getUsersDto.parse(req.query);
 
-        const users = await this.adminService.getUsers(
-            page,
-            limit
-        );
+        // const users = await this.adminService.getUsers(
+        //     page,
+        //     limit
+        // );
+
+        const query = getUsersDto.parse(req.query);
+
+        const users = await this.adminService.getUsers(query);
 
         res.status(HTTP_STATUS.OK).json(users);
 
@@ -46,7 +50,7 @@ export class AdminController {
 
         await this.adminService.blockUser(userId);
 
-        res.status(HTTP_STATUS.OK).json({success: true});
+        res.status(HTTP_STATUS.OK).json({ success: true });
 
     };
 
@@ -56,7 +60,7 @@ export class AdminController {
 
         await this.adminService.unblockUser(userId);
 
-        res.status(HTTP_STATUS.OK).json({success: true});
+        res.status(HTTP_STATUS.OK).json({ success: true });
 
     };
 }

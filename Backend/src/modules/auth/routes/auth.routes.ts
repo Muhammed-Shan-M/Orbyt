@@ -23,6 +23,7 @@ router.post(ROUTES.AUTH.RESEND_VERIFICATION_EMAIL, asyncHandler(authControler.re
 router.post(ROUTES.AUTH.LOGIN, asyncHandler(authControler.login))
 router.post(ROUTES.AUTH.ADMIN_LOGIN, asyncHandler(authControler.adminLogin))
 
+
 router.post(ROUTES.AUTH.REFRESHTOKEN, asyncHandler(authControler.refreshToken))
 
 

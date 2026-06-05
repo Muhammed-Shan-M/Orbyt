@@ -1,6 +1,7 @@
 
 import { ERROR_MESSAGES } from "../../../common/constands/error-message.constands";
 import { AppError } from "../../../common/errors/AppError";
+import { GetUsersDto } from "../dto/get-user.dto";
 import { mapUser } from "../mappers/user.mapper";
 import { IAdminRepository } from "../repositories/admin.repository.interface";
 import { IAdminService } from "./admin.service.interface";
@@ -11,14 +12,23 @@ export class AdminService
         private readonly adminRepository: IAdminRepository
     ) { }
 
-    async getUsers(page: number, limit: number) {
-        const { users, totalUsers, } = await this.adminRepository.findUsers(page, limit);
+    async getUsers(query: GetUsersDto) {
+        const { users, totalUsers, } = await this.adminRepository.findUsers(query);
+
+        // return {
+        //     users: users.map(mapUser),
+        //     totalUsers,
+        //     currentPage: page,
+        //     totalPages: Math.ceil(totalUsers / limit),
+        // };
 
         return {
             users: users.map(mapUser),
             totalUsers,
-            currentPage: page,
-            totalPages: Math.ceil(totalUsers / limit),
+            currentPage: query.page,
+            totalPages: Math.ceil(
+                totalUsers / query.limit
+            ),
         };
     }
 

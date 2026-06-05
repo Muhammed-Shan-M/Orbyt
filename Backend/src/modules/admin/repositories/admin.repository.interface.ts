@@ -1,7 +1,8 @@
 import { IUserDocument } from "../../auth/types/user.types";
+import { GetUsersDto } from "../dto/get-user.dto";
 
 export interface IAdminRepository {
-    findUsers(page: number, limit: number): Promise<{ users: IUserDocument[]; totalUsers: number; }>;
+    findUsers(query: GetUsersDto): Promise<{ users: IUserDocument[]; totalUsers: number; }>;
 
     findUserById(userId: string): Promise<IUserDocument | null>;
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AdminSidebar } from '../layouts/admin-sidebar'
 import { AdminNavbar } from '../layouts/admin-navbar'
 
@@ -15,38 +15,40 @@ import type { IUserDocument } from '@/shared/types/user'
 import { useUsers } from '../hooks/useUsers'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useUnblockUser } from '../hooks/useUnblockUser'
+import { useDebounce } from '@/shared/hooks/useDebounce'
+import { DataTable } from '@/shared/components/data-table/DataTable'
 
 export default function UserManagementPage() {
   const [selectedUser, setSelectedUser] = useState<IUserDocument | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterRole, setFilterRole] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
 
-  const { data, isLoading, } = useUsers(1, 10)
+  const debouncedSearch = useDebounce(searchQuery, 500);
+
+  const limit = 10;
+
+  const { data, isLoading } = useUsers({
+    page,
+    limit,
+    search: debouncedSearch,
+    role: filterRole,
+  });
 
   const { mutate: blockUserMutation } = useBlockUser();
 
   const { mutate: unblockUserMutation } = useUnblockUser();
 
-  const users = data?.users ?? []
+  // const users = data?.users ?? []
 
-  console.log('Fetched Users:', users)
 
-  const filteredUsers = users.filter((user) => {
-    // const matchesSearch =
-    //   user.fullName
-    //     ?.toLowerCase()
-    //     .includes(searchQuery.toLowerCase()) ||
-    //   user.email
-    //     .toLowerCase()
-    //     .includes(searchQuery.toLowerCase())
 
-    // const matchesRole =
-    //   !filterRole ||
-    //   user.role === filterRole
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, filterRole]);
 
-    return user
-  })
+  const totalPages = data?.totalPages ?? 1;
 
   const handleViewUser = (user: IUserDocument) => {
     console.log(user)
@@ -63,6 +65,82 @@ export default function UserManagementPage() {
   const handleUnblockUser = (userId: string) => {
     unblockUserMutation(userId);
   };
+
+  const columns = [
+    {
+      header: "User",
+
+      cell: (user: IUserDocument) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold flex-shrink-0">
+            {user.fullName
+              ?.split(' ')
+              .map((n) => n[0])
+              .join('')}
+          </div>
+
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-foreground truncate">
+              {user.fullName}
+            </p>
+
+            <p className="text-xs text-muted-foreground truncate">
+              {user.email}
+            </p>
+          </div>
+        </div>
+      ),
+    },
+
+    {
+      header: "Role",
+
+      cell: (user: IUserDocument) => (
+        <Badge variant="outline">
+          {user.role}
+        </Badge>
+      ),
+    },
+
+    {
+      header: "Status",
+
+      cell: (user: IUserDocument) => (
+        <Badge
+          variant="outline"
+          style={{
+            borderColor:
+              user.isBlocked
+                ? '#EF4444'
+                : '#00D084',
+            color:
+              user.isBlocked
+                ? '#EF4444'
+                : '#00D084',
+          }}
+        >
+          {user.isBlocked
+            ? 'Blocked'
+            : 'Active'}
+        </Badge>
+      ),
+    },
+
+    {
+      header: "Actions",
+
+      cell: (user: IUserDocument) => (
+        <>
+          <Button>View</Button>
+          <Button>Block</Button>
+        </>
+      ),
+    },
+  ];
+
+
+
+
 
   if (isLoading) {
     return (
@@ -186,7 +264,7 @@ export default function UserManagementPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-border/50 bg-card/50 overflow-hidden">
+        {/* <div className="rounded-lg border border-border/50 bg-card/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -222,7 +300,7 @@ export default function UserManagementPage() {
               </thead>
 
               <tbody className="divide-y divide-border/50">
-                {filteredUsers.map((user) => (
+                {data?.users.map((user) => (
                   <tr
                     key={user._id}
                     className="hover:bg-muted/20 transition-colors"
@@ -349,37 +427,66 @@ export default function UserManagementPage() {
 
           <div className="border-t border-border/50 px-6 py-4 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Showing {filteredUsers.length} users
+              Showing {data?.users.length} users
             </p>
 
             <div className="flex gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                disabled
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
               >
                 Previous
               </Button>
 
-              <Button
-                size="sm"
-                style={{
-                  backgroundColor: '#00D084',
-                  color: 'black',
-                }}
-              >
-                1
-              </Button>
+              {Array.from(
+                { length: totalPages },
+                (_, index) => index + 1
+              ).map((pageNumber) => (
+                <Button
+                  key={pageNumber}
+                  size="sm"
+                  variant={
+                    page === pageNumber
+                      ? "default"
+                      : "outline"
+                  }
+                  style={
+                    page === pageNumber
+                      ? {
+                        backgroundColor: "#00D084",
+                        color: "black",
+                      }
+                      : {}
+                  }
+                  onClick={() => setPage(pageNumber)}
+                >
+                  {pageNumber}
+                </Button>
+              ))}
 
               <Button
                 variant="outline"
                 size="sm"
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
               >
                 Next
               </Button>
             </div>
           </div>
-        </div>
+        </div> */}
+
+
+        <DataTable
+          columns={columns}
+          data={data?.users ?? []}
+          currentPage={page}
+          totalPages={totalPages}
+          totalItems={data?.users.length ?? 0}
+          onPageChange={setPage}
+        />
       </main>
 
       <UserDetailsModal
