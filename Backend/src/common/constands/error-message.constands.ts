@@ -17,7 +17,7 @@ export const ERROR_MESSAGES = {
     INVALID_OTP: "Invalid or expired OTP.",
     TOO_MANY_ATTEMPTS: "Too many failed attempts. Please request a new OTP.",
     OTP_EXPIRED: "OTP expired",
-    OTP_NOT_VERIFIED:'OTP verification required',
+    OTP_NOT_VERIFIED: 'OTP verification required',
     USER_CREATION_FAILED: "Unable to create user account.",
     UNAUTHORIZED: "Unauthorized access",
     FORBIDDEN: "Access denied",
@@ -36,9 +36,10 @@ export const ERROR_MESSAGES = {
 
   ADMIN: {
     USER_NOT_FOUND: "User not found",
-    USER_ALREADY_BLOCKED: "User is already blocked",
-    USER_ALREADY_UNBLOCKED: "User is already unblocked",
     USER_ID_INVALID: "Invalid user ID",
+    USER_ALREADY_ACTIVE: "User is already active.",
+    USER_ALREADY_BLOCKED: "User is already blocked.",
+    ADMIN_CANNOT_BE_MODIFIED: "Admin accounts cannot be blocked or modified."
   },
 
 

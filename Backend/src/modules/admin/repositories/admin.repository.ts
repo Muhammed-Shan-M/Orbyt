@@ -6,32 +6,24 @@ import { QueryFilter } from 'mongoose';
 import { IUser } from "../../auth/types/user.types";
 
 export class AdminRepository implements IAdminRepository {
-    // async findUsers(page: number, limit: number) {
-    //     const skip = (page - 1) * limit;
-
-    //     const [users, totalUsers] = await Promise.all([
-    //         User.find()
-    //             .sort({ createdAt: -1 })
-    //             .skip(skip)
-    //             .limit(limit),
-
-    //         User.countDocuments(),
-    //     ]);
-
-    //     return {
-    //         users,
-    //         totalUsers,
-    //     };
-    // }
-
 
     async findUsers(query: GetUsersDto) {
 
-        const { page, limit, search, role, status, } = query;
+        const {
+            page,
+            limit,
+            search,
+            role,
+            status,
+        } = query;
 
         const skip = (page - 1) * limit;
 
-        const filter: QueryFilter<IUser> = {};
+        const filter: QueryFilter<IUser> = {
+            role: {
+                $ne: "admin",
+            },
+        };
 
         if (search) {
             filter.$or = [
@@ -55,21 +47,25 @@ export class AdminRepository implements IAdminRepository {
         }
 
         if (status) {
-            filter.isBlocked = status === "blocked";
+            filter.isBlocked =
+                status === "blocked";
         }
 
-        const [users, totalUsers] = await Promise.all([
-            User.find(filter)
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limit),
+        const [users, totalUsers] =
+            await Promise.all([
+                User.find(filter)
+                    .sort({ createdAt: -1 })
+                    .skip(skip)
+                    .limit(limit),
 
-            User.countDocuments(filter),
-        ]);
+                User.countDocuments(filter),
+            ]);
 
-        return { users, totalUsers, };
+        return {
+            users,
+            totalUsers,
+        };
     }
-
     async findUserById(userId: string) {
         return User.findById(userId);
     }

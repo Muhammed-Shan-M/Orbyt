@@ -74,9 +74,9 @@ export default function UserManagementPage() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold flex-shrink-0">
             {user.fullName
-              ?.split(' ')
+              ?.split(" ")
               .map((n) => n[0])
-              .join('')}
+              .join("")}
           </div>
 
           <div className="min-w-0">
@@ -96,7 +96,10 @@ export default function UserManagementPage() {
       header: "Role",
 
       cell: (user: IUserDocument) => (
-        <Badge variant="outline">
+        <Badge
+          variant="outline"
+          className="capitalize"
+        >
           {user.role}
         </Badge>
       ),
@@ -109,20 +112,44 @@ export default function UserManagementPage() {
         <Badge
           variant="outline"
           style={{
-            borderColor:
-              user.isBlocked
-                ? '#EF4444'
-                : '#00D084',
-            color:
-              user.isBlocked
-                ? '#EF4444'
-                : '#00D084',
+            borderColor: user.isBlocked
+              ? "#EF4444"
+              : "#00D084",
+            color: user.isBlocked
+              ? "#EF4444"
+              : "#00D084",
           }}
         >
           {user.isBlocked
-            ? 'Blocked'
-            : 'Active'}
+            ? "Blocked"
+            : "Active"}
         </Badge>
+      ),
+    },
+
+    {
+      header: "Approval",
+
+      cell: (user: IUserDocument) => (
+        <span className="text-sm text-muted-foreground">
+          {user.role === "founder"
+            ? "No Approval Needed"
+            : user.isApproved
+              ? "Approved"
+              : "Pending Approval"}
+        </span>
+      ),
+    },
+
+    {
+      header: "Joined",
+
+      cell: (user: IUserDocument) => (
+        <span className="text-sm text-muted-foreground">
+          {new Date(
+            user.createdAt
+          ).toLocaleDateString()}
+        </span>
       ),
     },
 
@@ -130,15 +157,42 @@ export default function UserManagementPage() {
       header: "Actions",
 
       cell: (user: IUserDocument) => (
-        <>
-          <Button>View</Button>
-          <Button>Block</Button>
-        </>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() =>
+              handleViewUser(user)
+            }
+          >
+            View
+          </Button>
+
+          {user.isBlocked ? (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() =>
+                handleUnblockUser(user._id)
+              }
+            >
+              Unblock
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() =>
+                handleBlockUser(user._id)
+              }
+            >
+              Block
+            </Button>
+          )}
+        </div>
       ),
     },
   ];
-
-
 
 
 
@@ -263,220 +317,6 @@ export default function UserManagementPage() {
             </Button>
           </div>
         </div>
-
-        {/* <div className="rounded-lg border border-border/50 bg-card/50 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border/50 bg-muted/30">
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                    User
-                  </th>
-
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                    Role
-                  </th>
-
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                    Status
-                  </th>
-
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                    Verification
-                  </th>
-
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                    Approval
-                  </th>
-
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                    Joined
-                  </th>
-
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-border/50">
-                {data?.users.map((user) => (
-                  <tr
-                    key={user._id}
-                    className="hover:bg-muted/20 transition-colors"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                          {user.fullName
-                            ?.split(' ')
-                            .map((n) => n[0])
-                            .join('')}
-                        </div>
-
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">
-                            {user.fullName}
-                          </p>
-
-                          <p className="text-xs text-muted-foreground truncate">
-                            {user.email}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <Badge
-                        variant="outline"
-                        className="capitalize"
-                      >
-                        {user.role}
-                      </Badge>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <Badge
-                        variant="outline"
-                        style={{
-                          borderColor:
-                            user.isBlocked
-                              ? '#EF4444'
-                              : '#00D084',
-                          color:
-                            user.isBlocked
-                              ? '#EF4444'
-                              : '#00D084',
-                        }}
-                      >
-                        {user.isBlocked
-                          ? 'Blocked'
-                          : 'Active'}
-                      </Badge>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <Badge
-                        variant="outline"
-                        style={{
-                          borderColor:
-                            user.isEmailVerified
-                              ? '#00D084'
-                              : '#FFA500',
-                          color:
-                            user.isEmailVerified
-                              ? '#00D084'
-                              : '#FFA500',
-                        }}
-                      >
-                        {user.isEmailVerified
-                          ? 'Verified'
-                          : 'Pending'}
-                      </Badge>
-                    </td>
-
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      {user.isApproved
-                        ? 'Approved'
-                        : 'Pending Approval'}
-                    </td>
-
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      {new Date(
-                        user.createdAt
-                      ).toLocaleDateString()}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          handleViewUser(user)
-                        }
-                      >
-                        View
-                      </Button>
-                      {user.isBlocked ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            handleUnblockUser(user._id)
-                          }
-                        >
-                          Unblock
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            handleBlockUser(user._id)
-                          }
-                        >
-                          Block
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="border-t border-border/50 px-6 py-4 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Showing {data?.users.length} users
-            </p>
-
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page === 1}
-                onClick={() => setPage(page - 1)}
-              >
-                Previous
-              </Button>
-
-              {Array.from(
-                { length: totalPages },
-                (_, index) => index + 1
-              ).map((pageNumber) => (
-                <Button
-                  key={pageNumber}
-                  size="sm"
-                  variant={
-                    page === pageNumber
-                      ? "default"
-                      : "outline"
-                  }
-                  style={
-                    page === pageNumber
-                      ? {
-                        backgroundColor: "#00D084",
-                        color: "black",
-                      }
-                      : {}
-                  }
-                  onClick={() => setPage(pageNumber)}
-                >
-                  {pageNumber}
-                </Button>
-              ))}
-
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page === totalPages}
-                onClick={() => setPage(page + 1)}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        </div> */}
 
 
         <DataTable
