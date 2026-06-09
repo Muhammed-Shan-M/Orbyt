@@ -8,6 +8,7 @@ import { AuthRepository } from "../../modules/auth/repositories/impliments/signu
 import { ERROR_MESSAGES } from "../constands/error-message.constands";
 import { JwtPayload } from "../types/jwtPayload";
 import { IAuthRepository } from "../../modules/auth/repositories/interfaces/signup.repositery.interface";
+import logger from "../logger/logger";
 
 const authRepository: IAuthRepository = new AuthRepository()
 
@@ -66,7 +67,6 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
     const user = await authRepository.findById(decoded.userId);
 
-    console.log(decoded)
 
     if (!user) {
         return next(new AppError(ERROR_MESSAGES.AUTH.USER_NOT_FOUND, HTTP_STATUS.UNAUTHORIZED))
@@ -81,7 +81,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
         role: decoded.role
     }
 
-    console.log(req.user)
+    logger.info(`User ${user.email} authenticated successfully`)
 
     next()
 }

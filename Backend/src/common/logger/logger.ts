@@ -1,33 +1,36 @@
-import winston from "winston";
-import { ENV } from "../../config/env";
+import winston from 'winston';
+import { combinedTransport, errorTransport } from './transports';
 
-const isProd = ENV.NODE_ENV === "production";
+
 
 const logger = winston.createLogger({
-  level: isProd ? "info" : "debug",
+    level: 'info',
 
-  format: winston.format.combine(
-    winston.format.timestamp(),
+    format: winston.format.combine(
+        winston.format.timestamp(),
 
-    isProd
-      ? winston.format.json()
-      : winston.format.printf(({ level, message, timestamp }) => {
-          return `${timestamp} [${level.toUpperCase()}]: ${message}`;
-        })
-  ),
+        winston.format.errors({
+            stack: true,
+        }),
 
-  transports: [
-    new winston.transports.Console(),
+        winston.format.printf(
+            ({ timestamp, level, message, stack }) => {
+                if (stack) {
+                    return `${timestamp} [${level}] ${stack}`;
+                }
 
-    new winston.transports.File({
-      filename: "logs/error.log",
-      level: "error"
-    }),
+                return `${timestamp} [${level}] ${message}`;
+            },
+        ),
+    ),
 
-    new winston.transports.File({
-      filename: "logs/combined.log"
-    })
-  ]
+    transports: [
+        new winston.transports.Console(),
+
+        errorTransport,
+
+        combinedTransport,
+    ],
 });
 
 export default logger;

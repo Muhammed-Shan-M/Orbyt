@@ -112,7 +112,6 @@ export class AuthService implements IAuthService {
     }
 
     const hashedPassword = await argon2.hash(data.password);
-    console.log(hashedPassword, "hashed password")
 
     const token = genarateToken()
 
@@ -334,7 +333,6 @@ export class AuthService implements IAuthService {
     }
 
     await deleteRefreshToken(token)
-    console.log("User logged out successfully service")
     return {
       message: SUCCESS_MESSAGES.AUTH.LOGIN_SUCCESS,
     }

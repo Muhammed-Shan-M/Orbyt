@@ -6,7 +6,6 @@ import { SUCCESS_MESSAGES } from "../../../../common/constands/success-message";
 import { ENV } from "../../../../config/env";
 import { signupSchema } from "../../validaters/sigup.validaters";
 import { forgotPasswordSchema } from "../../validaters/forgotSchema.vlidaters";
-import { success } from "zod/mini";
 import { COOKIE_MAX_AGE } from "../../../../common/constands/config.constands";
 import { verifyForgotPasswordOtpSchema } from "../../validaters/verify-forgot-password.validator";
 import { resetPasswordSchema } from "../../validaters/reset-password.validator";
@@ -160,7 +159,6 @@ export class AuthController implements IAuthController {
       sameSite: "strict",
     })
 
-    console.log("User logged out successfully controller")
     res.status(HTTP_STATUS.OK).json({
       success: true,
       message: SUCCESS_MESSAGES.AUTH.LOGOUT_SUCCESS,

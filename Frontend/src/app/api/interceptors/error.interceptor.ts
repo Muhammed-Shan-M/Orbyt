@@ -71,7 +71,6 @@ export const errorInterceptor = async (error: AxiosError<ApiErrorResponse>) => {
 
             const newAccessToken = response.data.accessToken;
 
-            console.log('New access token obtained:', newAccessToken);
 
             store.dispatch(setAccessToken(newAccessToken));
 

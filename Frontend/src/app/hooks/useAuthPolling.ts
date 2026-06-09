@@ -19,7 +19,7 @@ export const useAuthPolling = (shouldPoll: boolean) => {
         const interval = setInterval(async () => {
             try {
                 const response = await getCurrentUser();
-                console.log("User authenticated:", response);
+
                 dispatch(
                     setCredentials({
                         user: response.user,

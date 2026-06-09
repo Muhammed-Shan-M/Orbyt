@@ -12,7 +12,7 @@ export const useAuthInitializer = () => {
             try {
                 const response = await refreshToken()
 
-                console.log('Token refreshed successfully:', response)
+
                 dispatch(
                     setCredentials({
                         user: response.user,

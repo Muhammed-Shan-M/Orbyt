@@ -1,6 +1,7 @@
 import Redis from "ioredis";
 import { ENV } from "./env";
 import { ERROR_MESSAGES } from "../common/constands/error-message.constands";
+import logger from "../common/logger/logger";
 
 if (!ENV.REDIS_URL) {
   throw new Error(ERROR_MESSAGES.GENERAL.SERVER_ERROR);
@@ -10,11 +11,11 @@ if (!ENV.REDIS_URL) {
 const redis = new Redis(ENV.REDIS_URL, {
 
   retryStrategy(times) {
-    console.log(`Redis reconnect attempt: ${times}`);
+    logger.info(`Redis reconnect attempt: ${times}`);
 
 
     if (times > 5) {
-      console.log("Redis reconnect stopped");
+      logger.error("Redis reconnect stopped");
       return null;
     }
 
@@ -23,7 +24,7 @@ const redis = new Redis(ENV.REDIS_URL, {
 });
 
 
-redis.on("connect", () => console.log("Redis connected"));
-redis.on("error", (err) => console.error("Redis error:", err));
+redis.on("connect", () => logger.info("Redis connected"));
+redis.on("error", (err) => logger.error("Redis error:", err));
 
 export default redis;

@@ -1,14 +1,15 @@
-import { NextFunction, Request, Response } from "express";
+import {  Request, Response } from "express";
 import { AppError } from "../errors/AppError";
 import { ZodError } from "zod";
 import { HTTP_STATUS } from "../constands/httpStatus";
 import { ERROR_MESSAGES } from "../constands/error-message.constands";
+import logger from "../logger/logger";
 
 
-export const globalErrorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+export const globalErrorHandler = (err: Error, req: Request, res: Response) => {
     let statusCode = HTTP_STATUS.INTERNAL_SERVER_ERROR
     let message = ERROR_MESSAGES.GENERAL.SERVER_ERROR
-    console.log(err)
+    logger.error(err)
 
     if (err instanceof AppError) {
         statusCode = err.statusCode
