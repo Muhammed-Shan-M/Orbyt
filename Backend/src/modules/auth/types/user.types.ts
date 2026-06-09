@@ -1,6 +1,5 @@
 import { HydratedDocument } from "mongoose";
-import { Types } from "mongoose";
-import { string } from "zod";
+
 
 export type UserRole = "founder" | "investor" | "admin";
 

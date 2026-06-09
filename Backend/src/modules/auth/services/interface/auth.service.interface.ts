@@ -1,6 +1,6 @@
-import { promises } from "node:dns";
+
 import { SignupDTO } from "../../dtos/auth.dtos";
-import { IUserDocument } from "../../types/user.types";
+
 
 export interface IAuthService {
     verifyEmail(token: string): Promise<any>;

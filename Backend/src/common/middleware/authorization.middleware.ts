@@ -5,7 +5,7 @@ import { AppError } from "../errors/AppError";
 import logger from "../logger/logger";
 
 export const requireRole = (...roles: string[]) => (req: Request, res: Response, next: NextFunction) => {
-    logger.info("Checking roles:", roles, "User role:", req.user?.role);
+    logger.info(`Checking roles: ${roles.join(', ')}, User role: ${req.user?.role}`);
 
     if (!req.user) {
         throw new AppError(ERROR_MESSAGES.AUTH.UNAUTHORIZED, HTTP_STATUS.UNAUTHORIZED,);

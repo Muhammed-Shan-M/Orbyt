@@ -1,4 +1,4 @@
-import { IUser, UserPayLoad } from "../../../modules/auth/types/user.types";
+
 
 export interface IRedisService {
   set<T>(key: string, value: T, ttl?: number): Promise<void>; 

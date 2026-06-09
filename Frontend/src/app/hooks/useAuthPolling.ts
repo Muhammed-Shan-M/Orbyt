@@ -30,7 +30,7 @@ export const useAuthPolling = (shouldPoll: boolean) => {
 
                 navigate("/");
             } catch (error) {
-                console.log("Waiting for verification...");
+                console.log("Waiting for verification...", error);
             }finally {
                 dispatch(setAuthChecked(true))
             }

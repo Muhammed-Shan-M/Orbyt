@@ -1,36 +1,41 @@
-import winston from 'winston';
-import { combinedTransport, errorTransport } from './transports';
+import {    appWinstonLogger,    requestWinstonLogger,} from './winston';
 
 
 
-const logger = winston.createLogger({
-    level: 'info',
+class Logger {
 
-    format: winston.format.combine(
-        winston.format.timestamp(),
+    info(...args: unknown[]): void {
+        appWinstonLogger.info(this.format(args));
+    }
 
-        winston.format.errors({
-            stack: true,
-        }),
+    warn(...args: unknown[]): void {
+        appWinstonLogger.warn(this.format(args));
+    }
 
-        winston.format.printf(
-            ({ timestamp, level, message, stack }) => {
-                if (stack) {
-                    return `${timestamp} [${level}] ${stack}`;
+    error(...args: unknown[]): void {
+        appWinstonLogger.error(this.format(args));
+    }
+
+    http(...args: unknown[]): void {
+        requestWinstonLogger.http(this.format(args));
+    }
+
+    private format(args: unknown[]): string {
+        return args.map((arg) => {
+                if (arg instanceof Error) {
+                    return arg.stack ?? arg.message;
                 }
 
-                return `${timestamp} [${level}] ${message}`;
-            },
-        ),
-    ),
+                if (typeof arg === 'object' && arg !== null) {
+                    return JSON.stringify(arg);
+                }
 
-    transports: [
-        new winston.transports.Console(),
+                return String(arg);
+            })
+            .join(' ');
+    }
+}
 
-        errorTransport,
-
-        combinedTransport,
-    ],
-});
+const logger = new Logger();
 
 export default logger;
