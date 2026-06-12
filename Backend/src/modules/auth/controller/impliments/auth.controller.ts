@@ -216,8 +216,9 @@ export class AuthController implements IAuthController {
 
 
   resendForgotPasswordOtp = async (req: Request, res: Response) => {
+    console.log(req.body)
 
-    const validateDate: ForgotPasswordRequestDto = forgotPasswordSchema.parse(req.body.email)
+    const validateDate: ForgotPasswordRequestDto = forgotPasswordSchema.parse(req.body)
 
     await this.authService.resendOtpForForgotPassword(validateDate);
 
