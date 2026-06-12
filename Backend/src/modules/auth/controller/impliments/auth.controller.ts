@@ -4,12 +4,15 @@ import { IAuthService } from "../../services/interface/auth.service.interface";
 import { HTTP_STATUS } from "../../../../common/constands/httpStatus";
 import { SUCCESS_MESSAGES } from "../../../../common/constands/success-message";
 import { ENV } from "../../../../config/env";
-import { signupSchema } from "../../validaters/sigup.validaters";
-import { forgotPasswordSchema } from "../../validaters/forgotSchema.vlidaters";
 import { COOKIE_MAX_AGE } from "../../../../common/constands/config.constands";
-import { verifyForgotPasswordOtpSchema } from "../../validaters/verify-forgot-password.validator";
-import { resetPasswordSchema } from "../../validaters/reset-password.validator";
-import { loginSchema } from "../../validaters/loginSchema.validaters";
+import { SignupRequestDto, signupSchema } from "../../dtos/request/signup.dto";
+import { VerifyEmailRequestDto, verifyEmailSchema } from "../../dtos/request/verify-email.dto";
+import { ResendVerificationEmailRequestDto, resendVerificationEmailSchema } from "../../dtos/request/resend-verification-email.dto";
+import { LoginRequestDto, loginSchema } from "../../dtos/request/login.dto";
+import { ForgotPasswordRequestDto, forgotPasswordSchema } from "../../dtos/request/forgotPassowed.dto";
+import { VerifyForgotPasswordOtpRequestDto, verifyForgotPasswordOtpSchema } from "../../dtos/request/verifyForgotPassword.dto";
+import { ResetPasswordRequestDto, resetPasswordSchema } from "../../dtos/request/resetPasswordSchema .dto.";
+import { ForgotPasswordCooldownRequestDto, forgotPasswordCooldownSchema } from "../../dtos/request/forgotPasswordCooldown.dto";
 
 
 
@@ -19,23 +22,23 @@ export class AuthController implements IAuthController {
   ) { }
 
   signup = async (req: Request, res: Response) => {
-    const validatedData = signupSchema.parse(req.body);
+    const validatedData: SignupRequestDto = signupSchema.parse(req.body);
 
-    const user = await this.authService.signup(validatedData);
+    await this.authService.signup(validatedData);
 
 
     res.status(HTTP_STATUS.OK).json({
       success: true,
-      data: user,
+      message: SUCCESS_MESSAGES.AUTH.VERIFICATION_EAMIL_SENT
     });
   }
 
 
   verifyEmail = async (req: Request, res: Response) => {
-    const { token } = req.body
 
+    const validatedData: VerifyEmailRequestDto = verifyEmailSchema.parse(req.body);
 
-    const response = await this.authService.verifyEmail(token as string)
+    const response = await this.authService.verifyEmail(validatedData.token as string)
 
     res.cookie(
       "refreshToken",
@@ -58,21 +61,23 @@ export class AuthController implements IAuthController {
 
 
   resendVerificationEmail = async (req: Request, res: Response) => {
-    const { email } = req.body
+    const validatedData: ResendVerificationEmailRequestDto = resendVerificationEmailSchema.parse(req.body);
 
-    await this.authService.resendVerificationEmail(email)
+    await this.authService.resendVerificationEmail(validatedData.email);
 
-    res.status(HTTP_STATUS.OK).json({ success: true, message: SUCCESS_MESSAGES.AUTH.VERIFICATION_EMAIL_RESENT })
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: SUCCESS_MESSAGES.AUTH.VERIFICATION_EMAIL_RESENT,
+    })
 
   }
 
 
   login = async (req: Request, res: Response) => {
-    const { email, password } = req.body
 
-    const validatedData = loginSchema.parse({ email, password })
+    const validatedData: LoginRequestDto = loginSchema.parse(req.body);
 
-    const result = await this.authService.login(validatedData.email, validatedData.password)
+    const result = await this.authService.login(validatedData)
 
     res.cookie(
       "refreshToken",
@@ -94,11 +99,9 @@ export class AuthController implements IAuthController {
   }
 
   adminLogin = async (req: Request, res: Response) => {
-    const { email, password } = req.body
+    const validatedData: LoginRequestDto = loginSchema.parse(req.body);
 
-    const validatedData = loginSchema.parse({ email, password })
-    
-    const result = await this.authService.adminLogin(validatedData.email, validatedData.password)
+    const result = await this.authService.adminLogin(validatedData)
 
     res.cookie(
       "refreshToken",
@@ -122,9 +125,7 @@ export class AuthController implements IAuthController {
   refreshToken = async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
 
-    const result = await this.authService.refreshToken(
-      refreshToken
-    )
+    const result = await this.authService.refreshToken(refreshToken)
 
     res.cookie(
       'refreshToken',
@@ -176,11 +177,11 @@ export class AuthController implements IAuthController {
 
   forgotPassword = async (req: Request, res: Response) => {
 
-    const vlaidateData = forgotPasswordSchema.parse(req.body)
+    const vlaidateData: ForgotPasswordRequestDto = forgotPasswordSchema.parse(req.body)
 
-    await this.authService.forgotPassword(vlaidateData.email)
+    await this.authService.forgotPassword(vlaidateData)
 
-    return res.status(HTTP_STATUS.OK).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
       message: SUCCESS_MESSAGES.AUTH.OTP_SEND
     })
@@ -190,11 +191,11 @@ export class AuthController implements IAuthController {
 
   verifyForgotPasswordOtp = async (req: Request, res: Response) => {
 
-    const validatedData = verifyForgotPasswordOtpSchema.parse(req.body)
+    const validatedData: VerifyForgotPasswordOtpRequestDto = verifyForgotPasswordOtpSchema.parse(req.body)
 
-    await this.authService.verifyForgotPasswordOtp(validatedData.email, validatedData.otp)
+    await this.authService.verifyForgotPasswordOtp(validatedData)
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
       message: 'OTP verified successfully',
     })
@@ -202,11 +203,11 @@ export class AuthController implements IAuthController {
 
 
   resetPassword = async (req: Request, res: Response) => {
-    const validatedData = resetPasswordSchema.parse(req.body)
+    const validatedData: ResetPasswordRequestDto = resetPasswordSchema.parse(req.body)
 
-    await this.authService.resetPassword(validatedData.email, validatedData.password)
+    await this.authService.resetPassword(validatedData)
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
       message: 'Password reset successfully',
     })
@@ -215,19 +216,22 @@ export class AuthController implements IAuthController {
 
 
   resendForgotPasswordOtp = async (req: Request, res: Response) => {
-    const result = await this.authService.resendOtpForForgotPassword(req.body.email);
+
+    const validateDate: ForgotPasswordRequestDto = forgotPasswordSchema.parse(req.body.email)
+
+    await this.authService.resendOtpForForgotPassword(validateDate);
 
     res.status(200).json({
       success: true,
-      message: result.message,
+      message: SUCCESS_MESSAGES.AUTH.RESEND_OTP,
     });
   }
 
 
   getForgotPasswordCooldown = async (req: Request, res: Response) => {
-    const { email } = req.query;
+   const validatedData:ForgotPasswordCooldownRequestDto = forgotPasswordCooldownSchema.parse(req.query);
 
-    const result = await this.authService.getForgotPasswordCooldown(email as string);
+    const result = await this.authService.getForgotPasswordCooldown(validatedData);
 
     res.status(200).json({
       success: true,

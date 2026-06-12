@@ -1,13 +1,11 @@
 import argon2 from "argon2";
 import { IAuthRepository } from "../../repositories/interfaces/signup.repositery.interface";
 import { AppError } from "../../../../common/errors/AppError";
-import { SignupDTO } from "../../dtos/auth.dtos";
 import { IAuthService } from "../interface/auth.service.interface";
 import { IRedisService } from "../../../../common/services/redis/resdis.interface";
 import { ERROR_MESSAGES } from "../../../../common/constands/error-message.constands";
 import { HTTP_STATUS } from "../../../../common/constands/httpStatus";
 import { genarateToken } from "../../utils/token.utils";
-import { SUCCESS_MESSAGES } from "../../../../common/constands/success-message";
 import { ENV } from "../../../../config/env";
 import { genarateAccessToken, genarateRefreshToken } from "../../../../common/utils/genarateTokens";
 import { IUserDocument, UserPayLoad } from "../../types/user.types";
@@ -20,6 +18,16 @@ import { forgotPasswordOtpTemplate } from "../../../../common/services/email/tem
 import { OtpData } from "../../types/otp.type";
 import { authRedisKeys } from "../../utils/auth.redis-keys";
 import { OTP_COOLDOWN_SECONDS, OTP_EXPIRY_SECONDS } from "../../utils/otp.util";
+import { SignupRequestDto } from "../../dtos/request/signup.dto";
+import { VerifyEmailResponseDto } from "../../dtos/response/verify-email-response.dto";
+import { IAuthMapper } from "../../mappers/auth.mapper.interface";
+import { AuthResponseDto } from "../../dtos/response/auth-response.dto";
+import { LoginRequestDto } from "../../dtos/request/login.dto";
+import { ForgotPasswordRequestDto } from "../../dtos/request/forgotPassowed.dto";
+import { VerifyForgotPasswordOtpRequestDto } from "../../dtos/request/verifyForgotPassword.dto";
+import { ResetPasswordRequestDto } from "../../dtos/request/resetPasswordSchema .dto.";
+import { ForgotPasswordCooldownRequestDto } from "../../dtos/request/forgotPasswordCooldown.dto";
+import { ForgotPasswordCooldownResponseDto } from "../../dtos/response/forgotPasswordCooldown-respones.dto";
 
 
 
@@ -27,10 +35,9 @@ export class AuthService implements IAuthService {
   constructor(
     private authRepo: IAuthRepository,
     private redisService: IRedisService,
-    private emailService: IEmailService
+    private emailService: IEmailService,
+    private authMapper: IAuthMapper
   ) { }
-
-
 
 
 
@@ -97,7 +104,7 @@ export class AuthService implements IAuthService {
 
 
 
-  async signup(data: SignupDTO) {
+  async signup(data: SignupRequestDto): Promise<void> {
 
     const existingUser = await this.authRepo.findByEmail(data.email);
 
@@ -148,15 +155,11 @@ export class AuthService implements IAuthService {
     });
 
 
-    return {
-      success: true,
-      message: SUCCESS_MESSAGES.AUTH.VERIFICATION_EAMIL_SENT
-    }
 
   }
 
 
-  async verifyEmail(token: string): Promise<any> {
+  async verifyEmail(token: string): Promise<VerifyEmailResponseDto> {
 
     const userEmail = await this.redisService.get(`verify:${token}`)
 
@@ -199,15 +202,15 @@ export class AuthService implements IAuthService {
       user._id.toString()
     );
 
-    return {
+    return this.authMapper.toVerifyEmailResponseDto(
       user,
       accessToken,
       refreshToken
-    }
+    );
 
   }
 
-  async resendVerificationEmail(email: string): Promise<any> {
+  async resendVerificationEmail(email: string): Promise<void> {
     const redisData = await this.redisService.get<UserPayLoad>(`verify:${email}`)
 
     if (!redisData || !redisData.token) {
@@ -237,14 +240,13 @@ export class AuthService implements IAuthService {
       html,
     });
 
-    return true
   }
 
 
 
-  async login(email: string, password: string): Promise<any> {
+  async login(data: LoginRequestDto): Promise<AuthResponseDto> {
 
-    const user = await this.authenticateUser(email, password)
+    const user = await this.authenticateUser(data.email, data.password)
 
     const accessToken = genarateAccessToken(user._id.toString(), user.role)
     const refreshToken = genarateRefreshToken()
@@ -255,18 +257,14 @@ export class AuthService implements IAuthService {
       user._id.toString()
     );
 
-    return {
-      user,
-      accessToken,
-      refreshToken
-    }
+    return this.authMapper.toAuthResponseDto(user, accessToken, refreshToken);
 
   }
 
 
-  async adminLogin(email: string, password: string) {
+  async adminLogin(data: LoginRequestDto):Promise<AuthResponseDto> {
 
-    const user = await this.authenticateUser(email, password);
+    const user = await this.authenticateUser(data.email, data.password);
 
     if (user.role !== "admin") {
       throw new AppError(ERROR_MESSAGES.AUTH.ADMIN_ACCESS_REQUIRED, HTTP_STATUS.FORBIDDEN);
@@ -278,15 +276,11 @@ export class AuthService implements IAuthService {
 
     await storeRefreshToken(refreshToken, user._id.toString());
 
-    return {
-      user,
-      accessToken,
-      refreshToken,
-    };
+    return this.authMapper.toAuthResponseDto(user, accessToken, refreshToken);
   }
 
 
-  async refreshToken(token: string): Promise<any> {
+  async refreshToken(token: string): Promise<AuthResponseDto> {
 
     if (!token) {
       throw new AppError(ERROR_MESSAGES.AUTH.INVALID_TOKEN, HTTP_STATUS.UNAUTHORIZED)
@@ -318,30 +312,24 @@ export class AuthService implements IAuthService {
     await storeRefreshToken(newRefreshToken, userId)
 
 
-    return {
-      accessToken,
-      refreshToken: newRefreshToken,
-      user,
-    };
+    return this.authMapper.toAuthResponseDto(user, accessToken, newRefreshToken);
 
   }
 
 
-  async logout(token: string): Promise<any> {
+  async logout(token: string): Promise<void> {
     if (!token) {
       throw new AppError(ERROR_MESSAGES.AUTH.TOKEN_MISSING, HTTP_STATUS.UNAUTHORIZED)
     }
 
     await deleteRefreshToken(token)
-    return {
-      message: SUCCESS_MESSAGES.AUTH.LOGIN_SUCCESS,
-    }
 
   }
 
 
-  async forgotPassword(email: string): Promise<any> {
-    const user = await this.authRepo.findByEmail(email)
+  async forgotPassword(data: ForgotPasswordRequestDto): Promise<void> {
+    
+    const user = await this.authRepo.findByEmail(data.email)
 
     if (!user) {
       return
@@ -360,8 +348,8 @@ export class AuthService implements IAuthService {
   }
 
 
-  async verifyForgotPasswordOtp(email: string, otp: string): Promise<any> {
-    const user = await this.authRepo.findByEmail(email)
+  async verifyForgotPasswordOtp(data: VerifyForgotPasswordOtpRequestDto): Promise<void> {
+    const user = await this.authRepo.findByEmail(data.email)
 
     if (!user) {
       throw new AppError(ERROR_MESSAGES.AUTH.INVALID_OTP, HTTP_STATUS.BAD_REQUEST)
@@ -383,7 +371,7 @@ export class AuthService implements IAuthService {
       throw new AppError(ERROR_MESSAGES.AUTH.TOO_MANY_ATTEMPTS, HTTP_STATUS.TOO_MANY_REQUESTS)
     }
 
-    const hashedOtp = hashValue(otp)
+    const hashedOtp = hashValue(data.otp)
 
     const isOtpValid = hashedOtp === otpData.hashedOtp
 
@@ -402,9 +390,9 @@ export class AuthService implements IAuthService {
   }
 
 
-  async resetPassword(email: string, newPassword: string): Promise<any> {
+  async resetPassword(data: ResetPasswordRequestDto): Promise<void> {
 
-    const user = await this.authRepo.findByEmail(email)
+    const user = await this.authRepo.findByEmail(data.email)
 
     if (!user) {
       throw new AppError(ERROR_MESSAGES.AUTH.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
@@ -424,7 +412,7 @@ export class AuthService implements IAuthService {
     }
 
 
-    const hashedPassword = await argon2.hash(newPassword);
+    const hashedPassword = await argon2.hash(data.password);
 
     await this.authRepo.updatePassword(user._id.toString(), hashedPassword)
 
@@ -434,9 +422,9 @@ export class AuthService implements IAuthService {
   }
 
 
-  async resendOtpForForgotPassword(email: string): Promise<any> {
+  async resendOtpForForgotPassword(data: ForgotPasswordRequestDto): Promise<void> {
 
-    const user = await this.authRepo.findByEmail(email);
+    const user = await this.authRepo.findByEmail(data.email);
 
     if (!user) {
       throw new AppError(ERROR_MESSAGES.AUTH.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
@@ -452,15 +440,12 @@ export class AuthService implements IAuthService {
 
     await this.createForgotPasswordOtp(user);
 
-    return {
-      message: "OTP resent successfully",
-    };
   }
 
 
-  async getForgotPasswordCooldown(email: string): Promise<{ remainingSeconds: number }> {
+  async getForgotPasswordCooldown(data: ForgotPasswordCooldownRequestDto): Promise<ForgotPasswordCooldownResponseDto> {
 
-    const user = await this.authRepo.findByEmail(email);
+    const user = await this.authRepo.findByEmail(data.email);
 
     if (!user) {
       return {

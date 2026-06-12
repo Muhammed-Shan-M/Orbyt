@@ -1,26 +1,37 @@
 
-import { SignupDTO } from "../../dtos/auth.dtos";
+import { ForgotPasswordRequestDto } from "../../dtos/request/forgotPassowed.dto";
+import { ForgotPasswordCooldownRequestDto } from "../../dtos/request/forgotPasswordCooldown.dto";
+import { LoginRequestDto } from "../../dtos/request/login.dto";
+import { ResetPasswordRequestDto } from "../../dtos/request/resetPasswordSchema .dto.";
+import { SignupRequestDto } from "../../dtos/request/signup.dto"; 
+import { VerifyForgotPasswordOtpRequestDto } from "../../dtos/request/verifyForgotPassword.dto";
+import { AuthResponseDto } from "../../dtos/response/auth-response.dto";
+import { ForgotPasswordCooldownResponseDto } from "../../dtos/response/forgotPasswordCooldown-respones.dto";
+import { VerifyEmailResponseDto } from "../../dtos/response/verify-email-response.dto";
 
 
 export interface IAuthService {
-    verifyEmail(token: string): Promise<any>;
-    signup(data: SignupDTO): Promise<any>;
-    resendVerificationEmail(email: string): Promise<any>
+    signup(data: SignupRequestDto): Promise<void>;
+    
+    verifyEmail(token: string): Promise<VerifyEmailResponseDto>;
+    
+    resendVerificationEmail(email: string): Promise<void>;
 
-    login(email: string, password: string): Promise<any>
-    adminLogin(email: string, password: string): Promise<any>
+    login(data: LoginRequestDto): Promise<AuthResponseDto>
 
-    refreshToken(token: string): Promise<any>
+    adminLogin(data: LoginRequestDto): Promise<AuthResponseDto>
 
-    logout(token: string): Promise<any>
+    refreshToken(token: string): Promise<AuthResponseDto>
 
-    forgotPassword(email: string): Promise<any>
+    logout(token: string): Promise<void>
 
-    verifyForgotPasswordOtp(email: string, otp: string): Promise<any>
+    forgotPassword(data: ForgotPasswordRequestDto): Promise<void>
 
-    resetPassword(email: string, newPassword: string): Promise<any>
+    verifyForgotPasswordOtp(data: VerifyForgotPasswordOtpRequestDto): Promise<void>
 
-    resendOtpForForgotPassword(email: string): Promise<any>
+    resetPassword(data: ResetPasswordRequestDto): Promise<void>
 
-    getForgotPasswordCooldown(email: string): Promise<{ remainingSeconds: number }>
+    resendOtpForForgotPassword(data: ForgotPasswordRequestDto): Promise<void>
+
+    getForgotPasswordCooldown(data: ForgotPasswordCooldownRequestDto): Promise<ForgotPasswordCooldownResponseDto>
 }   

@@ -1,5 +1,5 @@
 import z from "zod";
-import { emailSchema, fullNameSchema, passwordSchema, roleSchema } from "./schemas.validaters";
+import { emailSchema, fullNameSchema, passwordSchema, roleSchema } from "../../validaters/schemas.validaters";
 
 
 export const signupSchema = z.object({
@@ -13,3 +13,5 @@ export const signupSchema = z.object({
   message: "Passwords do not match",
   path: ["confirmPassword"],
 });
+
+export type SignupRequestDto = z.infer<typeof signupSchema>;

@@ -40,7 +40,7 @@ const SignupPage: React.FC = () => {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      const response = await signupMutation.mutateAsync(data)
+      await signupMutation.mutateAsync(data)
 
 
       setShowVerificationPopup(true)

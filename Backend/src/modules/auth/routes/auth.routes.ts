@@ -7,13 +7,16 @@ import { AuthRepository } from "../repositories/impliments/signup.repositery";
 import { RedisService } from "../../../common/services/redis/redis.service";
 import { protect } from "../../../common/middleware/protect.middlewares";
 import { NodemailerEmailService } from "../../../common/services/email/services/nodemailer-email.service";
+import { AuthMapper } from "../mappers/auth.mappers";
 
 const router = Router();
 
+
+const authMapper = new AuthMapper()
 const authRepository = new AuthRepository()
 const redisRepository = new RedisService()
 const emailService = new NodemailerEmailService()
-const authService = new AuthService(authRepository, redisRepository, emailService)
+const authService = new AuthService(authRepository, redisRepository, emailService, authMapper)
 const authControler = new AuthController(authService)
 
 router.post(ROUTES.AUTH.SIGNUP, asyncHandler(authControler.signup));
