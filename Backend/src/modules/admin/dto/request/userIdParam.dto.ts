@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ERROR_MESSAGES } from "../../../common/constands/error-message.constands";
+import { ERROR_MESSAGES } from "../../../../common/constands/error-message.constands";
 
 export const userIdParamDto = z.object({
   userId: z.string().regex(

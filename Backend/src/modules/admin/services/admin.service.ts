@@ -2,15 +2,16 @@
 import { ERROR_MESSAGES } from "../../../common/constands/error-message.constands";
 import { HTTP_STATUS } from "../../../common/constands/httpStatus";
 import { AppError } from "../../../common/errors/AppError";
-import { GetUsersDto } from "../dto/get-user.dto";
-import { mapUser } from "../mappers/user.mapper";
+import { GetUsersDto } from "../dto/request/get-user.dto";
+import { IAdminMapper } from "../mappers/admin.mappers.interface";
 import { IAdminRepository } from "../repositories/admin.repository.interface";
 import { IAdminService } from "./admin.service.interface";
 
 export class AdminService
     implements IAdminService {
     constructor(
-        private readonly adminRepository: IAdminRepository
+        private readonly adminRepository: IAdminRepository,
+        private readonly adminMapper: IAdminMapper
     ) { }
 
 
@@ -37,14 +38,9 @@ export class AdminService
     async getUsers(query: GetUsersDto) {
         const { users, totalUsers, } = await this.adminRepository.findUsers(query);
 
-        return {
-            users: users.map(mapUser),
-            totalUsers,
-            currentPage: query.page,
-            totalPages: Math.ceil(
-                totalUsers / query.limit
-            ),
-        };
+        const mappedUsers = users.map((user) => this.adminMapper.toResponse(user));
+
+        return this.adminMapper.toPaginatedUsersResponse( mappedUsers,totalUsers,query.page,query.limit)
     }
 
     async getUser(userId: string) {
@@ -54,7 +50,7 @@ export class AdminService
             throw new AppError(ERROR_MESSAGES.ADMIN.USER_NOT_FOUND, 404);
         }
 
-        return mapUser(user);
+        return this.adminMapper.toResponse(user);
     }
 
     async blockUser(userId: string) {

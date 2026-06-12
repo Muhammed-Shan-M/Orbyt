@@ -1,5 +1,5 @@
 export interface IUserListResponse {
-  _id: string;
+  id: string;
   fullName: string;
   email: string;
   isBlocked: boolean;

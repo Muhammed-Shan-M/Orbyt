@@ -1,10 +1,12 @@
-import { GetUsersDto } from "../dto/get-user.dto";
-import { IPaginatedUsers, IUserListResponse, } from "../types/admin.types";
+import { GetUsersDto } from "../dto/request/get-user.dto";
+import { PaginatedUsersResponseDto } from "../dto/respones/PaginatedUsersResponse.dto";
+import { UserResponseDto } from "../dto/respones/user-response.dto";
+
 
 export interface IAdminService {
-    getUsers(query: GetUsersDto): Promise<IPaginatedUsers>;
+    getUsers(query: GetUsersDto): Promise<PaginatedUsersResponseDto>;
 
-    getUser(userId: string): Promise<IUserListResponse>;
+    getUser(userId: string): Promise<UserResponseDto>;
 
     blockUser(userId: string): Promise<void>;
 

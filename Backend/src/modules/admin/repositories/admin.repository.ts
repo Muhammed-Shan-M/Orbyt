@@ -1,6 +1,6 @@
 
 import { User } from "../../auth/models/user.model";
-import { GetUsersDto } from "../dto/get-user.dto";
+import { GetUsersDto } from "../dto/request/get-user.dto";
 import { IAdminRepository } from "./admin.repository.interface";
 import { QueryFilter } from 'mongoose';
 import { IUser, IUserDocument } from "../../auth/types/user.types";

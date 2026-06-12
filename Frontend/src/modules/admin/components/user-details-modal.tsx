@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/components/ui/dialog'
 import { Button } from '@/shared/components/ui/button';
 import { Badge } from '@/shared/components/ui/badge'
-import { Mail, Building2, Shield, Calendar, AlertCircle } from 'lucide-react'
+import { Mail, Shield, Calendar, AlertCircle } from 'lucide-react'
 import { useUser } from '../hooks/useUser';
 
 interface UserDetailsModalProps {
@@ -27,16 +27,16 @@ const getStatusColor = (status: string) => {
     }
 }
 
-const getVerificationColor = (verification: string) => {
-    switch (verification) {
-        case 'Tier 1 Verified':
-        case 'Tier 2 Verified':
-        case 'Tier 3 Verified':
-            return '#00D084'
-        default:
-            return '#9CA3AF'
-    }
-}
+// const getVerificationColor = (verification: string) => {
+//     switch (verification) {
+//         case 'Tier 1 Verified':
+//         case 'Tier 2 Verified':
+//         case 'Tier 3 Verified':
+//             return '#00D084'
+//         default:
+//             return '#9CA3AF'
+//     }
+// }
 
 export function UserDetailsModal({ userId, isOpen, onClose, onBlock, onUnblock, }: UserDetailsModalProps) {
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { AdminSidebar } from '../layouts/admin-sidebar'
 import { AdminNavbar } from '../layouts/admin-navbar'
 
@@ -40,15 +40,10 @@ export default function UserManagementPage() {
 
   const { mutate: unblockUserMutation } = useUnblockUser();
 
-  // const users = data?.users ?? []
-
-
-
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, filterRole]);
 
   const totalPages = data?.totalPages ?? 1;
+
+  console.log(data?.users)
 
   const handleViewUser = (user: IUserDocument) => {
     setSelectedUserId(user._id)
@@ -257,9 +252,10 @@ export default function UserManagementPage() {
                 placeholder="Search name or email..."
                 className="pl-10 bg-muted/50 border-muted-foreground/20"
                 value={searchQuery}
-                onChange={(e) =>
-                  setSearchQuery(e.target.value)
-                }
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setPage(1);
+                }}
               />
             </div>
 
@@ -293,13 +289,15 @@ export default function UserManagementPage() {
                         }
                         : {}
                     }
-                    onClick={() =>
+                    onClick={() => {
                       setFilterRole(
                         role === 'All Users'
                           ? null
                           : roleValue
-                      )
-                    }
+                      );
+
+                      setPage(1);
+                    }}
                   >
                     {role}
                   </Button>

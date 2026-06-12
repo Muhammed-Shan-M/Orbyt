@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { IAdminService } from "../services/admin.service.interface";
 import { HTTP_STATUS } from "../../../common/constands/httpStatus";
-import { userIdParamDto } from "../dto/userIdParam.dto";
-import { getUsersDto } from "../dto/get-user.dto";
+import { userIdParamDto } from "../dto/request/userIdParam.dto";
+import { getUsersDto } from "../dto/request/get-user.dto";
+import logger from "../../../common/logger/logger";
 
 export class AdminController {
     constructor(
@@ -18,13 +19,6 @@ export class AdminController {
     };
 
     getUsers = async (req: Request, res: Response) => {
-
-        // const { page, limit } = getUsersDto.parse(req.query);
-
-        // const users = await this.adminService.getUsers(
-        //     page,
-        //     limit
-        // );
 
         const query = getUsersDto.parse(req.query);
 
@@ -46,12 +40,13 @@ export class AdminController {
 
     blockUser = async (req: Request, res: Response,) => {
 
+        logger.info('parms id ', req.params)
+
         const { userId } = userIdParamDto.parse(req.params);
 
         await this.adminService.blockUser(userId);
 
         res.status(HTTP_STATUS.OK).json({ success: true });
-
     };
 
     unblockUser = async (req: Request, res: Response) => {

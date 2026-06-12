@@ -6,12 +6,14 @@ import { ROUTES } from "../../../common/constands/routes";
 import { asyncHandler } from "../../../common/utils/asynHandler";
 import { protect } from "../../../common/middleware/protect.middlewares";
 import { requireRole } from "../../../common/middleware/authorization.middleware";
+import { AdminMapper } from "../mappers/admin.mapper";
 
 const router = Router();
 
 
 const adminRepository = new AdminRepository();
-const adminService = new AdminService(adminRepository);
+const adminMapper = new AdminMapper()
+const adminService = new AdminService(adminRepository,adminMapper);
 const adminController = new AdminController(adminService);
 
 router.get(ROUTES.ADMIN.DASHBOARD, asyncHandler(protect), asyncHandler(requireRole("admin")), asyncHandler(adminController.dashboard));
