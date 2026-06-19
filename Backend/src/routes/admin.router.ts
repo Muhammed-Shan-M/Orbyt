@@ -4,4 +4,5 @@ import { ROUTES } from "../common/constands/routes";
 
 export const registerAdminRoutes = (app: Application) => {
     app.use(ROUTES.ADMIN.BASE, adminRoutes);
-}; 
+};
+
