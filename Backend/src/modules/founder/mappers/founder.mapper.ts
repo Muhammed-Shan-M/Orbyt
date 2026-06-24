@@ -1,13 +1,14 @@
 // import { injectable } from "tsyringe";
 
+import { IFounderProfileDocument } from "../models/interfaces/founder-profile.interface.js";
 import { IFounderMapper } from "./interfaces/ifounder.mapper.js";
 
 export class FounderMapper implements IFounderMapper {
 
-    public toResponseDto(founderProfile) {
+    public toResponseDto(founderProfile: IFounderProfileDocument) {
 
         return {
-            id: founderProfile.id,
+            id: founderProfile._id.toString(),
             userId: founderProfile.userId.toString(),
 
             roleTitle: founderProfile.roleTitle,

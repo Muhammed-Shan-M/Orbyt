@@ -29,6 +29,12 @@ export const ROUTES = {
     UNBLOCK_USER: "/user/:userId/unblock"
   },
 
+
+  FOUNDER: {
+    PROFILE: "/profile",
+    STARTUP: "/startup"
+  },
+
   USER: {
     PROFILE: "/profile",
     COMPLETE_PROFILE: "/complete",

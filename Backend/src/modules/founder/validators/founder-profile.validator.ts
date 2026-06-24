@@ -1,21 +1,70 @@
+
 import { z } from "zod";
+import { ERROR_MESSAGES } from "../../../common/constands/error-message.constands";
 
-export const founderProfileSchema = z.object({
-    roleTitle: z.string().trim().max(100),
+export const roleTitleSchema = z
+    .string()
+    .min(2)
+    .max(100)
+    .transform(val => val.trim());
 
-    bio: z.string().trim().max(1000),
+export const bioSchema = z
+    .string()
+    .min(10)
+    .max(1000)
+    .transform(val => val.trim());
 
-    linkedinUrl: z.string().url().optional(),
+export const experienceYearsSchema = z
+    .number()
+    .min(0)
+    .max(100);
 
-    twitterUrl: z.string().url().optional(),
+export const startupNameSchema = z
+    .string()
+    .min(2, ERROR_MESSAGES.FOUNDER.INVALID_STARTUP_NAME)
+    .max(100, ERROR_MESSAGES.FOUNDER.INVALID_STARTUP_NAME)
+    .transform(val => val.trim());
 
-    website: z.string().url().optional(),
+export const startupIndustrySchema = z
+    .string()
+    .min(2, ERROR_MESSAGES.FOUNDER.INVALID_INDUSTRY)
+    .max(100, ERROR_MESSAGES.FOUNDER.INVALID_INDUSTRY)
+    .transform(val => val.trim());
 
-    experienceYears: z.number().min(0).max(100),
+export const startupStageSchema = z
+    .string()
+    .min(2, ERROR_MESSAGES.FOUNDER.INVALID_STARTUP_STAGE)
+    .max(50, ERROR_MESSAGES.FOUNDER.INVALID_STARTUP_STAGE)
+    .transform(val => val.trim());
 
-    skills: z.array(z.string()).optional(),
+export const startupDescriptionSchema = z
+    .string()
+    .min(10, ERROR_MESSAGES.FOUNDER.INVALID_DESCRIPTION)
+    .max(2000, ERROR_MESSAGES.FOUNDER.INVALID_DESCRIPTION)
+    .transform(val => val.trim());
 
-    previousStartups: z.array(z.string()).optional(),
+export const fundingAskSchema = z
+    .number()
+    .nonnegative(
+        ERROR_MESSAGES.FOUNDER.INVALID_FUNDING_AMOUNT
+    );
 
-    achievements: z.array(z.string()).optional(),
-}); 
+export const equityOfferedSchema = z
+    .number()
+    .min(
+        0,
+        ERROR_MESSAGES.FOUNDER.INVALID_EQUITY_PERCENTAGE
+    )
+    .max(
+        100,
+        ERROR_MESSAGES.FOUNDER.INVALID_EQUITY_PERCENTAGE
+    );
+
+export const urlSchema = z
+    .string()
+    .url(ERROR_MESSAGES.FOUNDER.INVALID_URL)
+    .transform(val => val.trim());
+
+export const stringArraySchema = z.array(
+    z.string().trim()
+);

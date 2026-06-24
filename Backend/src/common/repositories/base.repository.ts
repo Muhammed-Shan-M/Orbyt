@@ -1,4 +1,4 @@
-import { Model, Document, UpdateQuery, } from "mongoose";
+import { Model, Document, UpdateQuery, Types, } from "mongoose";
 
 export abstract class BaseRepository<T extends Document> {
 
@@ -6,7 +6,7 @@ export abstract class BaseRepository<T extends Document> {
         protected readonly model: Model<T>
     ) { }
 
-    async findById(id: string) {
+    async findById(id: Types.ObjectId | string) {
         return this.model.findById(id);
     }
 
