@@ -58,4 +58,5 @@ export class AdminController {
         res.status(HTTP_STATUS.OK).json({ success: true });
 
     };
+
 }

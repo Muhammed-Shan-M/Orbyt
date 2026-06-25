@@ -26,13 +26,19 @@ export const ROUTES = {
     USERS: "/users",
     USER: "/user/:userId",
     BLOCK_USER: "/user/:userId/block",
-    UNBLOCK_USER: "/user/:userId/unblock"
+    UNBLOCK_USER: "/user/:userId/unblock",
+
+    TEST: 'test'
   },
 
 
   FOUNDER: {
+    BASE: "/api/founder",
     PROFILE: "/profile",
-    STARTUP: "/startup"
+    COMPLETE_PROFILE: "/profile/complete",
+    STARTUPS: "/startups",
+    STARTUP_BY_ID: "/startups/:startupId",
+    STARTUP_STATUS: "/startups/:startupId/status",
   },
 
   USER: {

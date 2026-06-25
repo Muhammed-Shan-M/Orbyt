@@ -18,6 +18,7 @@ export const SUCCESS_MESSAGES = {
     STARTUP_CREATED_SUCCESSFULLY: "Startup created successfully.",
     STARTUP_UPDATED_SUCCESSFULLY: "Startup updated successfully.",
     STARTUP_DELETED_SUCCESSFULLY: "Startup deleted successfully.",
+    STARTUP_STATUS_UPDATED_SUCCESSFULLY: "Startup status updated successfully.",
   },
 
   TOKEN: {

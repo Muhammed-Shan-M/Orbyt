@@ -9,10 +9,10 @@ const signup_repositery_1 = require("../repositories/impliments/signup.repositer
 const redis_service_1 = require("../../../common/services/redis/redis.service");
 const nodemailer_email_service_1 = require("../../../common/services/email/services/nodemailer-email.service");
 const router = (0, express_1.Router)();
-const authRepository = new signup_repositery_1.AuthRepository();
+const UserRepository = new signup_repositery_1.AuthRepository();
 const redisRepository = new redis_service_1.RedisService();
 const emailService = new nodemailer_email_service_1.NodemailerEmailService();
-const authService = new auth_services_1.AuthService(authRepository, redisRepository, emailService);
+const authService = new auth_services_1.AuthService(UserRepository, redisRepository, emailService);
 const authControler = new auth_controller_1.AuthController(authService);
 router.post(routes_1.ROUTES.AUTH.SIGNUP, (0, asynHandler_1.asyncHandler)(authControler.signup));
 router.post(routes_1.ROUTES.AUTH.VERIFY_EMAIL, (0, asynHandler_1.asyncHandler)(authControler.verifyEmail));

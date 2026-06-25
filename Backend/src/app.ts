@@ -1,5 +1,5 @@
 import  express,{Application}  from "express";
-import { registerRoutes } from "./routes/founder.router";
+import { registerRoutes } from "./routes/auth.router";
 import { globalErrorHandler } from "./common/middleware/error.middleware"; 
 import { AppError } from "./common/errors/AppError";
 import cookieParser from "cookie-parser"

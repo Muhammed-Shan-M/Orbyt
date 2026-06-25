@@ -27,6 +27,8 @@ export interface IStartupDocument extends Document {
 
   isActive: boolean;
 
+  status: "active" | "unlisted"
+
   createdAt: Date;
   updatedAt: Date;
 }

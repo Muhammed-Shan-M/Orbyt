@@ -4,13 +4,13 @@ import jwt from "jsonwebtoken";
 import { AppError } from "../errors/AppError";
 import { ENV } from "../../config/env";
 import { HTTP_STATUS } from "../constands/httpStatus";
-import { AuthRepository } from "../../modules/auth/repositories/impliments/signup.repositery";
+import { UserRepository } from "../../modules/auth/repositories/impliments/user.repositery";
 import { ERROR_MESSAGES } from "../constands/error-message.constands";
 import { JwtPayload } from "../types/jwtPayload";
-import { IAuthRepository } from "../../modules/auth/repositories/interfaces/signup.repositery.interface";
+import { IUserRepository } from "../../modules/auth/repositories/interfaces/user.repositery.interface";
 import logger from "../logger/logger";
 
-const authRepository: IAuthRepository = new AuthRepository()
+const userRepository: IUserRepository = new UserRepository()
 
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
@@ -65,7 +65,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
     }
 
-    const user = await authRepository.findById(decoded.userId);
+    const user = await userRepository.findById(decoded.userId);
 
 
     if (!user) {

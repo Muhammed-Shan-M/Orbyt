@@ -5,6 +5,7 @@ import { IStartupMapper } from "./interfaces/istartup.mapper.js";
 import { StartupResponseDto } from "../dtos/response/startup-response.dto.js";
 
 import { IStartupDocument } from "../models/interfaces/startup.interface.js";
+import { StartupSummaryResponseDto } from "../dtos/response/founder-profile-details.response.dto.js";
 
 export class StartupMapper implements IStartupMapper {
 
@@ -42,6 +43,29 @@ export class StartupMapper implements IStartupMapper {
             createdAt: startup.createdAt,
 
             updatedAt: startup.updatedAt,
+        };
+    }
+
+
+    
+    public toSummaryDto(startup: IStartupDocument): StartupSummaryResponseDto {
+
+        return {
+            id: startup._id.toString(),
+
+            name: startup.name,
+
+            industry: startup.industry,
+
+            stage: startup.stage,
+
+            fundingAsk: startup.fundingAsk,
+
+            elevatorPitch: startup.elevatorPitch,
+
+            website: startup.website,
+
+            isActive: startup.isActive,
         };
     }
 }

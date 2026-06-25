@@ -1,7 +1,7 @@
 import { Application } from "express";
-import founderRoutes from '../modules/founder/routes/founder.routes'
+import authRoutes from '../modules/auth/routes/auth.routes'
 import { ROUTES } from "../common/constands/routes";
 
 export const registerRoutes = (app: Application) => {
-  app.use(ROUTES.FOUNDER.BASE, founderRoutes);
+  app.use(ROUTES.AUTH.BASE, authRoutes);
 };

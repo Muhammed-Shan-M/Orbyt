@@ -1,5 +1,4 @@
 
-// import { RedisService } from "../../../common/services/redis/redis.service";
 import { redisService } from "../../../common/services/redis/redis.instance";
 
 const redisClient = redisService;

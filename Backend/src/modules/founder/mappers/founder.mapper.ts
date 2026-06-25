@@ -34,4 +34,6 @@ export class FounderMapper implements IFounderMapper {
             updatedAt: founderProfile.updatedAt,
         };
     }
+
+
 }

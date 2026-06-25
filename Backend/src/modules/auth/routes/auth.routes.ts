@@ -3,7 +3,7 @@ import { AuthController } from "../controller/impliments/auth.controller";
 import { ROUTES } from "../../../common/constands/routes";
 import { asyncHandler } from "../../../common/utils/asynHandler";
 import { AuthService } from "../services/impliments/auth.services";
-import { AuthRepository } from "../repositories/impliments/signup.repositery";
+import { UserRepository } from "../repositories/impliments/user.repositery";
 import { RedisService } from "../../../common/services/redis/redis.service";
 import { protect } from "../../../common/middleware/protect.middlewares";
 import { NodemailerEmailService } from "../../../common/services/email/services/nodemailer-email.service";
@@ -13,10 +13,10 @@ const router = Router();
 
 
 const authMapper = new AuthMapper()
-const authRepository = new AuthRepository()
+const UserRepository = new UserRepository()
 const redisRepository = new RedisService()
 const emailService = new NodemailerEmailService()
-const authService = new AuthService(authRepository, redisRepository, emailService, authMapper)
+const authService = new AuthService(UserRepository, redisRepository, emailService, authMapper)
 const authControler = new AuthController(authService)
 
 router.post(ROUTES.AUTH.SIGNUP, asyncHandler(authControler.signup));

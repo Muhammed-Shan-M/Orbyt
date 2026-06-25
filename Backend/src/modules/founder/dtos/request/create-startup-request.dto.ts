@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { startupNameSchema, startupIndustrySchema, startupStageSchema, fundingAskSchema, equityOfferedSchema, startupDescriptionSchema, urlSchema, stringArraySchema } from "../../validators/founder-profile.validator";
 
-export const createStartupRequestSchema = z.object({
+export const addStartupRequestSchema = z.object({
     name: startupNameSchema,
 
     industry: startupIndustrySchema,
@@ -28,4 +28,4 @@ export const createStartupRequestSchema = z.object({
     pitchDeckUrl: urlSchema.optional(),
 });
 
-export type CreateStartupRequestDto = z.infer<typeof createStartupRequestSchema>;
+export type AddStartupRequestDto = z.infer<typeof addStartupRequestSchema>;

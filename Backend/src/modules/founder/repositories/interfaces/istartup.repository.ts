@@ -5,5 +5,6 @@ import { IStartupDocument } from "../../models/interfaces/startup.interface.js";
 
 export interface IStartupRepository extends IBaseRepository<IStartupDocument> {
 
-    findByFounderId(founderId: Types.ObjectId | string): Promise<IStartupDocument | null>;
+    findAllByFounderId(founderId: Types.ObjectId | string): Promise<IStartupDocument[]>;
+    findByIdAndFounderId(startupId:Types.ObjectId | string,  founderId: Types.ObjectId | string): Promise<IStartupDocument | null>;
 }

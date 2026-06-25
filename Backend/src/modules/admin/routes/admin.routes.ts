@@ -26,4 +26,5 @@ router.patch(ROUTES.ADMIN.BLOCK_USER, asyncHandler(protect), asyncHandler(requir
 
 router.patch(ROUTES.ADMIN.UNBLOCK_USER, asyncHandler(protect), asyncHandler(requireRole("admin")), asyncHandler(adminController.unblockUser));
 
+
 export default router;

@@ -68,3 +68,8 @@ export const urlSchema = z
 export const stringArraySchema = z.array(
     z.string().trim()
 );
+
+export const StatusSchema = z.enum([
+    "active",
+    "unlisted",
+]);

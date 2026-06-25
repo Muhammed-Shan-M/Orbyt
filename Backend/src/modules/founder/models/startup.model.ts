@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IStartupDocument } from "./interfaces/startup.interface"; 
+import { IStartupDocument } from "./interfaces/startup.interface";
 
 const startupSchema = new Schema<IStartupDocument>(
   {
@@ -71,6 +71,12 @@ const startupSchema = new Schema<IStartupDocument>(
       type: Boolean,
       default: true,
     },
+
+    status: {
+      type: String,
+      enum: ["active", "unlisted"],
+      default: "active",
+    }
   },
   {
     timestamps: true,

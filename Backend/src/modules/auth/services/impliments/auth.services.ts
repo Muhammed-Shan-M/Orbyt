@@ -1,5 +1,5 @@
 import argon2 from "argon2";
-import { IAuthRepository } from "../../repositories/interfaces/signup.repositery.interface";
+import { IUserRepository } from "../../repositories/interfaces/user.repositery.interface";
 import { AppError } from "../../../../common/errors/AppError";
 import { IAuthService } from "../interface/auth.service.interface";
 import { IRedisService } from "../../../../common/services/redis/resdis.interface";
@@ -33,7 +33,7 @@ import { ForgotPasswordCooldownResponseDto } from "../../dtos/response/forgotPas
 
 export class AuthService implements IAuthService {
   constructor(
-    private authRepo: IAuthRepository,
+    private authRepo: IUserRepository,
     private redisService: IRedisService,
     private emailService: IEmailService,
     private authMapper: IAuthMapper
